@@ -1,0 +1,6 @@
+toto	21
+tata	23
+titi	25
+tutu	65
+tete	34
+tutut	35
