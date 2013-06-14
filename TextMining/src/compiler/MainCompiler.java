@@ -2,9 +2,9 @@ package compiler;
 
 import java.io.*;
 
-import patricia_trie.PatriciaTrieCompiler;
+import patricia_trie.PatriciaTrie;
 
-public class Main {
+public class MainCompiler {
 
 	/**
 	 * @param args
@@ -12,31 +12,34 @@ public class Main {
 	public static void main(String[] args) throws FileNotFoundException {
 		// Check parameters
 		if (args.length < 2) {
-			System.out.println("Usage: compiler /path/to/word/word.txt /path/to/output/dict.bin");
+			System.out
+					.println("Usage: compiler /path/to/word/word.txt /path/to/output/dict.bin");
 			return;
 		}
 
 		// Open txt dictionary
 		String fichier = args[0];
 		try {
-		InputStream ips;
+			InputStream ips;
 			ips = new FileInputStream(fichier);
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String ligne;
 
-			PatriciaTrieCompiler tree = new PatriciaTrieCompiler();
+			PatriciaTrie tree = new PatriciaTrie();
 			int i = 0;
-				while ((ligne = br.readLine()) != null) {
-					String[] tab = ligne.split("\\t");
-					String word = tab[0];
-					int freq = Integer.valueOf(tab[1]);
-					tree.insert(word, freq);
-					i++;
-					if (i % 1000 == 0)
-						System.out.println(i);
-				}
-			
+			while ((ligne = br.readLine()) != null) {
+				String[] tab = ligne.split("\\t");
+				String word = tab[0];
+				int freq = Integer.valueOf(tab[1]);
+				tree.insert(word, freq);
+				i++;
+				if (i % 1000 == 0)
+					System.out.println(i);
+			}
+
+			System.out.println(tree.getData());
+
 			br.close();
 			ipsr.close();
 			ips.close();
@@ -46,7 +49,7 @@ public class Main {
 			oos.writeObject(tree);
 			oos.flush();
 			oos.close();
-			
+
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
