@@ -4,3 +4,4 @@ titi	25
 tutu	65
 tete	34
 tutut	35
+tutua	35

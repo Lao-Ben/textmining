@@ -42,44 +42,26 @@ public class PatriciaTrieNode implements Serializable {
 	}
 
 	String insert(String word, int wordLen, int frequency, String data) {
-		// std::cout << "INSERT" << std::endl;
-		System.out.println(word + " " + sons.size() + " " + data);
 		for (PatriciaTrieNode p : sons) {
-			System.out.println(p.start);
-			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0)) // The
-			// first
-			// letter
-			// is
-			// found
+			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0))
 			{
-				// We wanna know how far the keys are equal
 				int keyLen = p.length;
 				int pos;
-				for (pos = 0; pos < wordLen // While the word is long enough
-						&& pos < keyLen // While the key is long enough
-						&& word.charAt(pos) == data.charAt(p.start + pos); // While
-																			// the
-																			// chars
-																			// are
-																			// equal
-				pos++) {
-				}
-
-				// The word already exists
+				for (pos = 0; pos < wordLen
+						&& pos < keyLen
+						&& word.charAt(pos) == data.charAt(p.start + pos);
+				pos++);
 				if (pos == keyLen && pos == wordLen) {
 					p.frequency = frequency;
 					return data;
 				}
 
-				if (pos >= keyLen) // The word is equal but longer than the key
+				if (pos >= keyLen)
 				{
-					// We insert in his son
 					data = p.insert(word.substring(keyLen), wordLen - keyLen,
 							frequency, data);
 					return data;
 				}
-
-				// We have to split the current node
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.start + pos,
 						keyLen - pos, p.frequency);
 				p.length = pos;
@@ -89,22 +71,14 @@ public class PatriciaTrieNode implements Serializable {
 				p.sons.add(newNode);
 
 				if (pos < wordLen) {
-					// There has been a difference between the two
 					p.frequency = 0;
-					// System.out.println(pos);
 					data = addSon(p.sons, data, word.substring(pos), wordLen
 							- pos, frequency);
 				}
 				return data;
 			}
-			/*
-			 * if (data.length() > 0) System.out.println(data.charAt(p.start));
-			 */
 		}
-		// The first letter has not been found,
-		// We create a new son
 		data = addSon(sons, data, word, wordLen, frequency);
-		// System.out.println(data);
 		return data;
 	}
 

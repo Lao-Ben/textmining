@@ -130,7 +130,7 @@ public class Minion {
 		for (int j = oldKeyLen + 1; j <= keyLen; ++j)
 			for (int i = iStart; i < iEnd; ++i) {
 				int dist;
-				if (word.charAt(i - 1) == key.charAt(j - 1))
+				if (i-1 < word.length() && word.charAt(i - 1) == key.charAt(j - 1))
 					dist = 0;
 				else
 					dist = 1;
@@ -144,7 +144,7 @@ public class Minion {
 				if (j + maxDistance > i)
 					cmpTable[i][j] = Math.min(cmpTable[i][j],
 							cmpTable[i][j - 1] + 1);
-				if (i > 1 && j > 1 && word.charAt(i - 1) == key.charAt(j - 2)
+				if (i > 1 && i - 1 < word.length() && j > 1 && word.charAt(i - 1) == key.charAt(j - 2)
 						&& word.charAt(i - 2) == key.charAt(j - 1))
 					cmpTable[i][j] = Math.min(cmpTable[i][j],
 							(cmpTable[i - 2][j - 2] + dist) // transposition
@@ -161,9 +161,9 @@ public class Minion {
 		return s1.substring(0, length).compareTo(s2.substring(0, length));
 	}
 	
-	String copy(String s1, String s2, int length)
+	String copy(String s2, int length)
 	{
-		char[] d = s1.toCharArray();
+		char[] d = new char[length];
 		for (int i = 0; i < length; i++)
 		{
 			d[i] = s2.charAt(i);
@@ -179,7 +179,7 @@ public class Minion {
 		if (strncmp(word.substring(keyLen), treeData.substring(node.getStart()), nodeStrLength) != 0)
 			return; // The two strings are different
 
-		key = key.substring(0,keyLen).concat(copy(key.substring(keyLen),treeData.substring(node.getStart()), nodeStrLength));
+		key = key.substring(0,keyLen).concat(copy(treeData.substring(node.getStart()), nodeStrLength));
 		keyLen += nodeStrLength;
 
 		if (keyLen == wordLen) {
@@ -206,14 +206,13 @@ public class Minion {
 		int oldKeyLen = keyLen;
 		int toBeCopied = Math.min(node.getLength(), wordLen + maxDistance
 				- keyLen);
-		key = key.substring(0,keyLen).concat(copy(key.substring(keyLen),treeData.substring(node.getStart()), toBeCopied));
+		key = key.substring(0,keyLen).concat(copy(treeData.substring(node.getStart()), toBeCopied));
 		keyLen += toBeCopied;
 
 		// compute the distance
 		MyObject<Integer> minDistance = new MyObject<Integer>(0);
 		MyObject<Integer> realDistance = new MyObject<Integer>(0);
 		calculateDistance(oldKeyLen, keyLen, minDistance, realDistance);
-		System.out.println(minDistance.obj + " "+realDistance.obj);
 
 		if (minDistance.getObj() > 2 * maxDistance) {
 			return; // No chance to match
@@ -225,7 +224,7 @@ public class Minion {
 				&& realDistance.getObj() <= maxDistance) {
 			int freq = node.getFrequency();
 			if (freq > 0) {
-				ResultSearch result = new ResultSearch(word,
+				ResultSearch result = new ResultSearch(key,
 						realDistance.getObj(), freq);
 				collector.add(result);
 			}

@@ -34,11 +34,7 @@ public class MainCompiler {
 				int freq = Integer.valueOf(tab[1]);
 				tree.insert(word, freq);
 				i++;
-				if (i % 1000 == 0)
-					System.out.println(i);
 			}
-
-			System.out.println(tree.getData());
 
 			br.close();
 			ipsr.close();
