@@ -1,4 +1,4 @@
-package App;
+package app;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -43,11 +43,10 @@ public class MainApp {
 				String word = tab[2];
 				int dist = Integer.valueOf(tab[1]);
 				tree.search(word, dist, tree.getData(), results);
+				ResultSearch.exportJSon(results);
+				results = new ArrayList<ResultSearch>();
 				i++;
-				if (i % 1000 == 0)
-					System.out.println(i);
 			}
-			ResultSearch.exportJSon(results);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

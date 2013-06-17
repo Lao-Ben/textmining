@@ -27,22 +27,6 @@ public class ResultSearch implements Comparable<ResultSearch> {
 		return frequence;
 	}
 
-	public boolean resultCompare(ResultSearch first, ResultSearch second) {
-		if (first.getDistance() < second.getDistance())
-			return true;
-		if (first.getDistance() > second.getDistance())
-			return false;
-
-		// equal distance
-		if (first.getFrequence() > second.getFrequence())
-			return true;
-		if (first.getFrequence() < second.getFrequence())
-			return false;
-
-		// equal frequency
-		return (first.getWord().compareTo(second.getWord()) < 0);
-	}
-
 	public static void exportJSon(List<ResultSearch> resultCollector) {
 		Collections.sort(resultCollector);
 		int size = resultCollector.size();

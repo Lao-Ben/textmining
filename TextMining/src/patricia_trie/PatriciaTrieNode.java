@@ -3,6 +3,8 @@ package patricia_trie;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PatriciaTrieNode implements Serializable {
 
@@ -16,6 +18,9 @@ public class PatriciaTrieNode implements Serializable {
 	protected int length;
 	protected int frequency;
 
+	/**
+	 * 
+	 */
 	public PatriciaTrieNode() {
 		super();
 		sons = new ArrayList<PatriciaTrieNode>();
@@ -24,6 +29,12 @@ public class PatriciaTrieNode implements Serializable {
 		length = 0;
 	}
 
+	/**
+	 * 
+	 * @param start
+	 * @param length
+	 * @param frequency
+	 */
 	public PatriciaTrieNode(int start, int length, int frequency) {
 		super();
 		sons = new ArrayList<PatriciaTrieNode>();
@@ -32,6 +43,15 @@ public class PatriciaTrieNode implements Serializable {
 		this.length = length;
 	}
 
+	/**
+	 * 
+	 * @param sons
+	 * @param data
+	 * @param word
+	 * @param wordLen
+	 * @param frequency
+	 * @return
+	 */
 	String addSon(List<PatriciaTrieNode> sons, String data, String word,
 			int wordLen, int frequency) {
 		PatriciaTrieNode node = new PatriciaTrieNode(data.length(), wordLen,
@@ -41,26 +61,31 @@ public class PatriciaTrieNode implements Serializable {
 		return data;
 	}
 
-	String insert(String word, int wordLen, int frequency, String data) {
-		for (PatriciaTrieNode p : sons) {
-			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0))
-			{
-				int keyLen = p.length;
+	/**
+	 * 
+	 * @param word
+	 * @param wordLen
+	 * @param frequency
+	 * @param data
+	 * @return
+	 */
+	String insert(final String word, final int wordLen, final int frequency,
+			String data) {
+		for (final PatriciaTrieNode p : sons) {
+			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0)) {
+				final int keyLen = p.length;
 				int pos;
-				for (pos = 0; pos < wordLen
-						&& pos < keyLen
-						&& word.charAt(pos) == data.charAt(p.start + pos);
-				pos++);
+				for (pos = 0; pos < wordLen && pos < keyLen
+						&& word.charAt(pos) == data.charAt(p.start + pos); pos++)
+					;
 				if (pos == keyLen && pos == wordLen) {
 					p.frequency = frequency;
 					return data;
 				}
 
-				if (pos >= keyLen)
-				{
-					data = p.insert(word.substring(keyLen), wordLen - keyLen,
+				if (pos >= keyLen) {
+					return p.insert(word.substring(keyLen), wordLen - keyLen,
 							frequency, data);
-					return data;
 				}
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.start + pos,
 						keyLen - pos, p.frequency);
@@ -94,17 +119,29 @@ public class PatriciaTrieNode implements Serializable {
 		return length;
 	}
 
+	/**
+	 * 
+	 * @param prefix
+	 * @param word
+	 * @param maxDistance
+	 * @param treeData
+	 * @param collector
+	 */
 	void search(String prefix, String word, int maxDistance, String treeData,
 			List<ResultSearch> collector) {
-		for (PatriciaTrieNode n : sons) {
-			Minion m = new Minion();
-			m.configure(word, maxDistance, treeData, collector);
-			if (maxDistance == 0) {
-				m.browseNode0(n, prefix.length());
-			} else {
-				m.calculateDistance(0, prefix.length(), null, null);
-				m.browseNode(n, prefix.length());
+		ExecutorService executor = Executors.newCachedThreadPool();
+		synchronized (collector) {
+			for (PatriciaTrieNode n : sons) {
+				Minion m = new Minion();
+				m.configure(n, word, maxDistance, prefix.length(), treeData,
+						collector);
+				if (maxDistance > 0)
+					m.calculateDistance(0, prefix.length(), null, null);
+				executor.execute(m);
+				executor.shutdown();
 			}
 		}
+		while (!executor.isTerminated())
+			;
 	}
 }

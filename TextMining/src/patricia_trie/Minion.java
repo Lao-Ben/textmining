@@ -3,7 +3,7 @@ package patricia_trie;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Minion {
+public class Minion implements Runnable{
 	String word;
 
 	String treeData;
@@ -19,6 +19,10 @@ public class Minion {
 	int cmpTableActualSize;
 	boolean isIdle;
 	List<ResultSearch> collector;
+	
+	PatriciaTrieNode root;
+	
+	int lengthkey;
 
 	Minion() {
 		word = null;
@@ -29,6 +33,8 @@ public class Minion {
 		keyBufferSize = 0;
 		isIdle = true;
 		collector = new ArrayList<ResultSearch>();
+		lengthkey = 0;
+		root = null;
 	}
 
 	void tableDisplay(char keyLen) {
@@ -80,11 +86,13 @@ public class Minion {
 		System.out.println();
 	}
 
-	void configure(String word, int maxDistance, String treeData, List<ResultSearch> collectors) {
+	void configure(PatriciaTrieNode root, String word, int maxDistance, int lengthkey, String treeData, List<ResultSearch> collectors) {
 		// log("being configured...");
+		this.root = root;
 		this.word = word;
 		this.maxDistance = maxDistance;
 		this.treeData = treeData;
+		this.lengthkey = lengthkey;
 
 		this.wordLen = word.length();
 		
@@ -236,5 +244,15 @@ public class Minion {
 			nbSons--;
 		}
 		return;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		if (maxDistance == 0) {
+			browseNode0(root, lengthkey);
+		} else {
+			browseNode(root, lengthkey);
+		}
 	}
 }

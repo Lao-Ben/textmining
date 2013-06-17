@@ -3,8 +3,13 @@
     <property name="src.dir" value="src"/>
     <property name="bin.dir" value="bin"/>
     <property name="build.dir" value="build"/>
+    <property name="doc.dir" value="doc"/>
 
-    <target name="init">
+    <target name="docinit">
+      <mkdir dir="${doc.dir}"/>
+    </target>
+
+    <target name="init" depends="docinit">
       <mkdir dir="${bin.dir}"/>
       <mkdir dir="${build.dir}"/>
     </target>
@@ -22,7 +27,7 @@
         </jar>
 	<jar destfile="build/app.jar" filesetmanifest="mergewithoutmain">
 	  <manifest>
-	    <attribute name="Main-Class" value="App.MainApp"/>
+	    <attribute name="Main-Class" value="app.MainApp"/>
 	    <attribute name="Class-Path" value="."/>
 	  </manifest>
 	  <fileset dir="bin"/>
@@ -31,5 +36,14 @@
     <target name="clean">
       <delete dir="${bin.dir}"/>
       <delete dir="${build.dir}"/>
+      <delete dir="${doc.dir}"/>
+    </target>
+    <target name="doc" depends="docinit">
+      <echo message="=== Creating javadoc documentation ===" />
+      <javadoc sourcepath="${src.dir}" destdir="${doc.dir}">
+	<fileset dir="${src.dir}" defaultexcludes="yes">
+	  <include name="**" />
+	</fileset>
+      </javadoc>
     </target>
 </project>
