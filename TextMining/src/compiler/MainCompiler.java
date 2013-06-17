@@ -13,7 +13,7 @@ public class MainCompiler {
 		// Check parameters
 		if (args.length < 2) {
 			System.out
-					.println("Usage: compiler /path/to/word/word.txt /path/to/output/dict.bin");
+					.println("Usage: TextMiningCompiler /path/to/word/word.txt /path/to/output/dict.bin");
 			return;
 		}
 
