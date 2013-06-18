@@ -44,6 +44,7 @@ public class MainCompiler {
 					debut = System.currentTimeMillis();
 				}
 			}
+			System.out.println(tree.getData());
 
 			br.close();
 			ipsr.close();

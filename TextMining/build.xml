@@ -14,7 +14,7 @@
       <mkdir dir="${build.dir}"/>
     </target>
 
-    <target name="compile" depends="init">
+    <target name="compile" depends="clean, init">
       <javac srcdir="src" destdir="bin" />
     </target>
     <target name="create_jar" depends="compile">
@@ -25,13 +25,13 @@
             </manifest>
             <fileset dir="bin"/>
         </jar>
-	<jar destfile="build/app.jar" filesetmanifest="mergewithoutmain">
-	  <manifest>
-	    <attribute name="Main-Class" value="app.MainApp"/>
-	    <attribute name="Class-Path" value="."/>
-	  </manifest>
-	  <fileset dir="bin"/>
-	</jar>
+<jar destfile="build/app.jar" filesetmanifest="mergewithoutmain">
+<manifest>
+<attribute name="Main-Class" value="app.MainApp"/>
+<attribute name="Class-Path" value="."/>
+</manifest>
+<fileset dir="bin"/>
+</jar>
     </target>
     <target name="clean">
       <delete dir="${bin.dir}"/>
@@ -41,9 +41,9 @@
     <target name="doc" depends="docinit">
       <echo message="=== Creating javadoc documentation ===" />
       <javadoc sourcepath="${src.dir}" destdir="${doc.dir}">
-	<fileset dir="${src.dir}" defaultexcludes="yes">
-	  <include name="**" />
-	</fileset>
+<fileset dir="${src.dir}" defaultexcludes="yes">
+<include name="**" />
+</fileset>
       </javadoc>
     </target>
 </project>

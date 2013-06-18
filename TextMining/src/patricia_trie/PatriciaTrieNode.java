@@ -54,9 +54,14 @@ public class PatriciaTrieNode implements Serializable {
 	 */
 	String addSon(List<PatriciaTrieNode> sons, String data, String word,
 			int wordLen, int frequency) {
-		PatriciaTrieNode node = new PatriciaTrieNode(data.length(), wordLen,
-				frequency);
-		data = data.concat(word);
+		int pos = data.length();
+		PatriciaTrieNode node;
+		if ((pos = data.indexOf(word)) != -1)
+			node = new PatriciaTrieNode(pos, wordLen, frequency);
+		else {
+			node = new PatriciaTrieNode(data.length(), wordLen, frequency);
+			data = data.concat(word);
+		}
 		sons.add(node);
 		return data;
 	}
@@ -69,11 +74,10 @@ public class PatriciaTrieNode implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	String insert(final String word, final int wordLen, final int frequency,
-			String data) {
-		for (final PatriciaTrieNode p : sons) {
+	String insert(String word, int wordLen, int frequency, String data) {
+		for (PatriciaTrieNode p : sons) {
 			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0)) {
-				final int keyLen = p.length;
+				int keyLen = p.length;
 				int pos;
 				for (pos = 0; pos < wordLen && pos < keyLen
 						&& word.charAt(pos) == data.charAt(p.start + pos); pos++)
@@ -129,19 +133,20 @@ public class PatriciaTrieNode implements Serializable {
 	 */
 	void search(String prefix, String word, int maxDistance, String treeData,
 			List<ResultSearch> collector) {
-		ExecutorService executor = Executors.newCachedThreadPool();
-		synchronized (collector) {
+		/*ExecutorService executor = Executors.newCachedThreadPool();
+		synchronized (collector) {*/
 			for (PatriciaTrieNode n : sons) {
 				Minion m = new Minion();
 				m.configure(n, word, maxDistance, prefix.length(), treeData,
 						collector);
 				if (maxDistance > 0)
 					m.calculateDistance(0, prefix.length(), null, null);
-				executor.execute(m);
-				executor.shutdown();
+				/*executor.execute(m);
+				executor.shutdown();*/
+				m.run();
 			}
-		}
+		/*}
 		while (!executor.isTerminated())
-			;
+			;*/
 	}
 }
