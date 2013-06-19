@@ -3,8 +3,6 @@ package patricia_trie;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class PatriciaTrieNode implements Serializable {
 
@@ -15,7 +13,7 @@ public class PatriciaTrieNode implements Serializable {
 	List<PatriciaTrieNode> sons;
 
 	protected int start;
-	protected int length;
+	protected byte length;
 	protected int frequency;
 
 	/**
@@ -35,9 +33,17 @@ public class PatriciaTrieNode implements Serializable {
 	 * @param length
 	 * @param frequency
 	 */
-	public PatriciaTrieNode(int start, int length, int frequency) {
+	public PatriciaTrieNode(int start, byte length, int frequency) {
 		super();
 		sons = new ArrayList<PatriciaTrieNode>();
+		this.start = start;
+		this.frequency = frequency;
+		this.length = length;
+	}
+	
+	public PatriciaTrieNode(int start, byte length, int frequency, List<PatriciaTrieNode> sons) {
+		super();
+		this.sons = new ArrayList<PatriciaTrieNode>(sons);
 		this.start = start;
 		this.frequency = frequency;
 		this.length = length;
@@ -53,7 +59,7 @@ public class PatriciaTrieNode implements Serializable {
 	 * @return
 	 */
 	String addSon(List<PatriciaTrieNode> sons, String data, String word,
-			int wordLen, int frequency) {
+			byte wordLen, int frequency) {
 		int pos = data.length();
 		PatriciaTrieNode node;
 		if ((pos = data.indexOf(word)) != -1)
@@ -74,11 +80,11 @@ public class PatriciaTrieNode implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	String insert(String word, int wordLen, int frequency, String data) {
+	String insert(String word, byte wordLen, int frequency, String data) {
 		for (PatriciaTrieNode p : sons) {
 			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0)) {
-				int keyLen = p.length;
-				int pos;
+				byte keyLen = p.length;
+				byte pos;
 				for (pos = 0; pos < wordLen && pos < keyLen
 						&& word.charAt(pos) == data.charAt(p.start + pos); pos++)
 					;
@@ -88,21 +94,20 @@ public class PatriciaTrieNode implements Serializable {
 				}
 
 				if (pos >= keyLen) {
-					return p.insert(word.substring(keyLen), wordLen - keyLen,
+					return p.insert(word.substring(keyLen), (byte) (wordLen - keyLen),
 							frequency, data);
 				}
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.start + pos,
-						keyLen - pos, p.frequency);
+						(byte) (keyLen - pos), p.frequency, p.sons);
 				p.length = pos;
-				newNode.sons = new ArrayList<PatriciaTrieNode>(p.sons);
 				p.frequency = frequency;
 				p.sons.clear();
 				p.sons.add(newNode);
 
 				if (pos < wordLen) {
 					p.frequency = 0;
-					data = addSon(p.sons, data, word.substring(pos), wordLen
-							- pos, frequency);
+					data = addSon(p.sons, data, word.substring(pos), (byte) (wordLen
+							- pos), frequency);
 				}
 				return data;
 			}

@@ -28,7 +28,7 @@ public class PatriciaTrie implements Serializable {
 	 */
 	public void insert(String word, int frequency)
 	{
-		data = root.insert(word, word.length(), frequency, data);
+		data = root.insert(word, (byte) word.length(), frequency, data);
 	}
 	
 	/**

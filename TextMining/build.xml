@@ -18,7 +18,7 @@
     </target>
 
     <target name="compile" depends="init">
-      <javac srcdir="src" destdir="bin" />
+      <javac srcdir="src" destdir="bin" memoryinitialsize="256m" memorymaximumsize="512m" fork="true"/>
     </target>
     <target name="create_jar" depends="compile">
         <jar destfile="build/compiler.jar" filesetmanifest="mergewithoutmain">
