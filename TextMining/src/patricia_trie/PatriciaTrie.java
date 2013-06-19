@@ -52,4 +52,9 @@ public class PatriciaTrie implements Serializable {
 		root.search("", word, maxDistance, treeData, collector);
 	}
 	
+	public void print()
+	{
+		root.print(getData());
+	}
+	
 }

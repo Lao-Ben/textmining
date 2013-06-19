@@ -14,7 +14,10 @@
       <mkdir dir="${build.dir}"/>
     </target>
 
-    <target name="compile" depends="clean, init">
+    <target name="distclean" depends="clean, create_jar">
+    </target>
+
+    <target name="compile" depends="init">
       <javac srcdir="src" destdir="bin" />
     </target>
     <target name="create_jar" depends="compile">

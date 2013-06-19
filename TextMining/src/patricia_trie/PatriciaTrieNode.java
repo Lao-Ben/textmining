@@ -94,7 +94,7 @@ public class PatriciaTrieNode implements Serializable {
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.start + pos,
 						keyLen - pos, p.frequency);
 				p.length = pos;
-				newNode.sons = p.sons;
+				newNode.sons = new ArrayList<PatriciaTrieNode>(p.sons);
 				p.frequency = frequency;
 				p.sons.clear();
 				p.sons.add(newNode);
@@ -148,5 +148,14 @@ public class PatriciaTrieNode implements Serializable {
 		/*}
 		while (!executor.isTerminated())
 			;*/
+	}
+	
+	void print(String data)
+	{
+		System.out.print("{"+data.substring(start, start+length)+"("+sons.size()+")"+" : ");
+		if (sons.size() > 0)
+			for(PatriciaTrieNode n : sons)
+				n.print(data);
+		System.out.print("}");
 	}
 }
