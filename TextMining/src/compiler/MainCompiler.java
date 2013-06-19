@@ -1,6 +1,7 @@
 package compiler;
 
 import java.io.*;
+import java.util.zip.GZIPOutputStream;
 
 import patricia_trie.PatriciaTrie;
 
@@ -49,8 +50,9 @@ public class MainCompiler {
 			ipsr.close();
 			ips.close();
 
-			FileOutputStream fich = new FileOutputStream(args[1]);
-			ObjectOutputStream oos = new ObjectOutputStream(fich);
+			FileOutputStream file = new FileOutputStream(args[1]);
+			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(gzipOut);
 			oos.writeObject(tree);
 			oos.flush();
 			oos.close();

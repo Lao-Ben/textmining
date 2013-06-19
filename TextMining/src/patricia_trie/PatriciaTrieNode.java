@@ -58,7 +58,7 @@ public class PatriciaTrieNode implements Serializable {
 	 * @param frequency
 	 * @return
 	 */
-	String addSon(List<PatriciaTrieNode> sons, String data, String word,
+	void addSon(List<PatriciaTrieNode> sons, StringBuilder data, String word,
 			byte wordLen, int frequency) {
 		int pos = data.length();
 		PatriciaTrieNode node;
@@ -66,10 +66,9 @@ public class PatriciaTrieNode implements Serializable {
 			node = new PatriciaTrieNode(pos, wordLen, frequency);
 		else {
 			node = new PatriciaTrieNode(data.length(), wordLen, frequency);
-			data = data.concat(word);
+			data.append(word);
 		}
 		sons.add(node);
-		return data;
 	}
 
 	/**
@@ -80,7 +79,7 @@ public class PatriciaTrieNode implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	String insert(String word, byte wordLen, int frequency, String data) {
+	void insert(String word, byte wordLen, int frequency, StringBuilder data) {
 		for (PatriciaTrieNode p : sons) {
 			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0)) {
 				byte keyLen = p.length;
@@ -90,12 +89,13 @@ public class PatriciaTrieNode implements Serializable {
 					;
 				if (pos == keyLen && pos == wordLen) {
 					p.frequency = frequency;
-					return data;
+					return;
 				}
 
 				if (pos >= keyLen) {
-					return p.insert(word.substring(keyLen), (byte) (wordLen - keyLen),
+					p.insert(word.substring(keyLen), (byte) (wordLen - keyLen),
 							frequency, data);
+					return;
 				}
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.start + pos,
 						(byte) (keyLen - pos), p.frequency, p.sons);
@@ -106,14 +106,14 @@ public class PatriciaTrieNode implements Serializable {
 
 				if (pos < wordLen) {
 					p.frequency = 0;
-					data = addSon(p.sons, data, word.substring(pos), (byte) (wordLen
+					addSon(p.sons, data, word.substring(pos), (byte) (wordLen
 							- pos), frequency);
 				}
-				return data;
+				return;
 			}
 		}
-		data = addSon(sons, data, word, wordLen, frequency);
-		return data;
+		addSon(sons, data, word, wordLen, frequency);
+		return;
 	}
 
 	public int getStart() {

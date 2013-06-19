@@ -10,7 +10,7 @@ public class PatriciaTrie implements Serializable {
 	 */
 	private static final long serialVersionUID = -5570840938703266587L;
 	PatriciaTrieNode root;
-	String data;
+	StringBuilder data;
 
 	/**
 	 * Constructeur
@@ -18,7 +18,7 @@ public class PatriciaTrie implements Serializable {
 	public PatriciaTrie() {
 		super();
 		root = new PatriciaTrieNode();
-		data = "";
+		data = new StringBuilder();
 	}
 	
 	/**
@@ -28,14 +28,14 @@ public class PatriciaTrie implements Serializable {
 	 */
 	public void insert(String word, int frequency)
 	{
-		data = root.insert(word, (byte) word.length(), frequency, data);
+		root.insert(word, (byte) word.length(), frequency, data);
 	}
 	
 	/**
 	 * Retourne les donnees du patricia trie
 	 * @return les donnees du tableau pour le patricia trie
 	 */
-	public String getData()
+	public StringBuilder getData()
 	{
 		return data;
 	}
@@ -54,7 +54,7 @@ public class PatriciaTrie implements Serializable {
 	
 	public void print()
 	{
-		root.print(getData());
+		root.print(getData().toString());
 	}
 	
 }

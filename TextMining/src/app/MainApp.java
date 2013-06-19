@@ -42,7 +42,7 @@ public class MainApp {
 				String[] tab = ligne.split(" ");
 				String word = tab[2];
 				int dist = Integer.valueOf(tab[1]);
-				tree.search(word, dist, tree.getData(), results);
+				tree.search(word, dist, tree.getData().toString(), results);
 				ResultSearch.exportJSon(results);
 				results = new ArrayList<ResultSearch>();
 				i++;
