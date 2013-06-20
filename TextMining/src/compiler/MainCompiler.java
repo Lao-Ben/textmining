@@ -66,7 +66,7 @@ public class MainCompiler {
 
 			
 			// force GC. Useless?
-			System.gc();			
+			System.gc();
 			
 			System.out.println("Serializing...");
 			debut = System.currentTimeMillis();
@@ -77,6 +77,8 @@ public class MainCompiler {
 			oos.writeObject(tree);
 			oos.flush();
 			oos.close();
+			gzipOut.close();
+			file.close();
 
 			System.out.println("Serialization time : " + (System.currentTimeMillis() - debut));
 			

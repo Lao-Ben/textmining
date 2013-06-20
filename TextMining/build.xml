@@ -14,7 +14,7 @@
       <mkdir dir="${build.dir}"/>
     </target>
 
-    <target name="distclean" depends="clean, create_jar">
+    <target name="distclean" depends="clean, create_jar, doc">
     </target>
 
     <target name="compile" depends="init">
