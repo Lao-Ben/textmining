@@ -57,4 +57,10 @@ public class PatriciaTrie implements Serializable {
 		root.print(getData().toString());
 	}
 	
+	public void trim()
+	{
+		root.trim();
+		data.trimToSize();
+	}
+	
 }

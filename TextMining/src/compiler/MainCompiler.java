@@ -59,7 +59,12 @@ public class MainCompiler {
 			ips.close();
 
 			// trim the StringBuilder's size
-			tree.getData().trimToSize();
+			System.out.println("Triming...");
+			tree.trim();
+			debut = System.currentTimeMillis();
+			long fin = System.currentTimeMillis();
+			long time = fin-debut;
+			System.out.println(time);
 			
 			
 			System.out.println("Serializing...");
