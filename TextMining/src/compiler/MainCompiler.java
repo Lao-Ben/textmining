@@ -60,19 +60,22 @@ public class MainCompiler {
 
 			// trim the StringBuilder's size
 			tree.getData().trimToSize();
-			
+	
+			// force GC. Useless?
+			System.gc();			
 			
 			System.out.println("Serializing...");
-			
-			// force GC. Useless?
-			System.gc();
+			debut = System.currentTimeMillis();
+
 			FileOutputStream file = new FileOutputStream(args[1]);
-//			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(file);
+			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(gzipOut);
 			oos.writeObject(tree);
 			oos.flush();
 			oos.close();
 
+			System.out.println("Serialization time : " + (System.currentTimeMillis() - debut));
+			
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
