@@ -11,6 +11,8 @@ public class MainCompiler {
 	 * @param args
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
+		long start = System.currentTimeMillis();
+
 		// Check parameters
 		if (args.length < 2) {
 			System.out
@@ -58,9 +60,11 @@ public class MainCompiler {
 			ipsr.close();
 			ips.close();
 
-			// trim the StringBuilder's size
-			tree.getData().trimToSize();
-	
+			debut = System.currentTimeMillis();
+			tree.trim();
+			System.out.println("trimming time : " + (System.currentTimeMillis() - debut));
+
+			
 			// force GC. Useless?
 			System.gc();			
 			
@@ -83,5 +87,6 @@ public class MainCompiler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Global time : " + (System.currentTimeMillis() - start));
 	}
 }

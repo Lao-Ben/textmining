@@ -70,7 +70,6 @@ public class PatriciaTrieNode implements Serializable {
 			data.append(word);
 		}
 		sons.add(node);
-		sons.trimToSize();
 	}
 
 	/**
@@ -110,8 +109,6 @@ public class PatriciaTrieNode implements Serializable {
 					p.frequency = 0;
 					addSon(p.sons, data, word.substring(pos), (byte) (wordLen
 							- pos), frequency);
-				} else {
-					p.sons.trimToSize();
 				}
 				return;
 			}
@@ -157,6 +154,16 @@ public class PatriciaTrieNode implements Serializable {
 		/*}
 		while (!executor.isTerminated())
 			;*/
+	}
+	
+	public void recursiveTrim() {
+		if (sons == null || sons.isEmpty())
+			return;
+		sons.trimToSize();
+		
+		for (PatriciaTrieNode son : sons) {
+			son.recursiveTrim();
+		}
 	}
 	
 	void print(String data)

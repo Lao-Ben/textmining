@@ -1,6 +1,7 @@
 package patricia_trie;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PatriciaTrie implements Serializable {
@@ -41,6 +42,14 @@ public class PatriciaTrie implements Serializable {
 	}
 	
 	/**
+	 * 
+	 * @return
+	 */
+	public PatriciaTrieNode getRoot() {
+		return root;
+	}
+	
+	/**
 	 * Recherche le mot specifier dans le patricia trie
 	 * @param word le mot a rechercher
 	 * @param maxDistance la distance max de recherche
@@ -52,9 +61,17 @@ public class PatriciaTrie implements Serializable {
 		root.search("", word, maxDistance, treeData, collector);
 	}
 	
+	public void trim()
+	{
+		root.recursiveTrim();
+		data.trimToSize();
+	}
+
+	
 	public void print()
 	{
 		root.print(getData().toString());
 	}
 	
 }
+
