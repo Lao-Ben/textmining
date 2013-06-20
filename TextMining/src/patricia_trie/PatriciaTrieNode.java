@@ -9,7 +9,8 @@ public class PatriciaTrieNode implements Serializable {
 	/**
 	 * 
 	 */
-	//private static final int serialVersionUID = 594153568;
+	private static final long serialVersionUID = -6873191676473588179L;
+
 	ArrayList<PatriciaTrieNode> sons;
 
 	protected int start;
