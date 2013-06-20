@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import patricia_trie.PatriciaTrie;
 import patricia_trie.ResultSearch;
@@ -27,7 +28,8 @@ public class MainApp {
 		FileInputStream fich;
 		try {
 			fich = new FileInputStream(args[0]);
-			ObjectInputStream oos = new ObjectInputStream(fich);
+			GZIPInputStream gz = new GZIPInputStream(fich);
+			ObjectInputStream oos = new ObjectInputStream(gz);
 			
 			PatriciaTrie tree = (PatriciaTrie) oos.readObject();
 			oos.close();
