@@ -28,11 +28,18 @@ public class MainApp {
 		FileInputStream fich;
 		try {
 			fich = new FileInputStream(args[0]);
-			GZIPInputStream gz = new GZIPInputStream(fich);
-			ObjectInputStream oos = new ObjectInputStream(gz);
+			GZIPInputStream gzipIn = new GZIPInputStream(fich);
+			ObjectInputStream oos = new ObjectInputStream(gzipIn);
 			
+			System.out.println("Deserializing...");
+			long debut = System.currentTimeMillis();
 			PatriciaTrie tree = (PatriciaTrie) oos.readObject();
+			long fin = System.currentTimeMillis();
+			long time = fin-debut;
+			System.out.println(time);
 			oos.close();
+			gzipIn.close();
+			fich.close();
 			
 			InputStreamReader ipsr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(ipsr);

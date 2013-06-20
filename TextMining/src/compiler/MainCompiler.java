@@ -78,6 +78,8 @@ public class MainCompiler {
 			oos.writeObject(tree);
 			oos.flush();
 			oos.close();
+			gzipOut.close();
+			file.close();
 
 			System.out.println("Serialization time : " + (System.currentTimeMillis() - debut));
 			
