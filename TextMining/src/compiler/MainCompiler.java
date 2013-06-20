@@ -30,16 +30,24 @@ public class MainCompiler {
 			PatriciaTrie tree = new PatriciaTrie();
 			int i = 0;
 
+			//final int MegaBytes = 1024*1024;
+			
 			long debut = System.currentTimeMillis();
 			while ((ligne = br.readLine()) != null) {
-				String[] tab = ligne.split("\\t");
-				String word = tab[0];
-				int freq = Integer.valueOf(tab[1]);
+				int index = ligne.indexOf("\t");
+				String word = ligne.substring(0, index);
+				int freq = Integer.valueOf(ligne.substring(index + 1));
 				tree.insert(word, freq);
 				i++;
 				if (i % 10000 == 0)
 				{
-					long fin = System.currentTimeMillis();
+				//	long freeMemory = Runtime.getRuntime().freeMemory()/MegaBytes;
+		        //    long maxMemory = Runtime.getRuntime().maxMemory()/MegaBytes;
+		        //    long totalMemory = Runtime.getRuntime().totalMemory() / MegaBytes;
+		            
+//		  System.out.println("Used Memory in JVM: " + (maxMemory - freeMemory) + "/" + maxMemory + " " + totalMemory);
+
+		            long fin = System.currentTimeMillis();
 					long time = fin-debut;
 					System.out.println(i+" "+time);
 					debut = System.currentTimeMillis();
@@ -50,9 +58,17 @@ public class MainCompiler {
 			ipsr.close();
 			ips.close();
 
+			// trim the StringBuilder's size
+			tree.getData().trimToSize();
+			
+			
+			System.out.println("Serializing...");
+			
+			// force GC. Useless?
+			System.gc();
 			FileOutputStream file = new FileOutputStream(args[1]);
-			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(gzipOut);
+//			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(file);
 			oos.writeObject(tree);
 			oos.flush();
 			oos.close();

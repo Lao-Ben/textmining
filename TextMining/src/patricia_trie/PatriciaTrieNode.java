@@ -9,8 +9,8 @@ public class PatriciaTrieNode implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5941583576683489343L;
-	List<PatriciaTrieNode> sons;
+	//private static final int serialVersionUID = 594153568;
+	ArrayList<PatriciaTrieNode> sons;
 
 	protected int start;
 	protected byte length;
@@ -41,7 +41,7 @@ public class PatriciaTrieNode implements Serializable {
 		this.length = length;
 	}
 	
-	public PatriciaTrieNode(int start, byte length, int frequency, List<PatriciaTrieNode> sons) {
+	public PatriciaTrieNode(int start, byte length, int frequency, ArrayList<PatriciaTrieNode> sons) {
 		super();
 		this.sons = new ArrayList<PatriciaTrieNode>(sons);
 		this.start = start;
@@ -58,7 +58,7 @@ public class PatriciaTrieNode implements Serializable {
 	 * @param frequency
 	 * @return
 	 */
-	void addSon(List<PatriciaTrieNode> sons, StringBuilder data, String word,
+	void addSon(ArrayList<PatriciaTrieNode> sons, StringBuilder data, String word,
 			byte wordLen, int frequency) {
 		int pos = data.length();
 		PatriciaTrieNode node;
@@ -69,6 +69,7 @@ public class PatriciaTrieNode implements Serializable {
 			data.append(word);
 		}
 		sons.add(node);
+		sons.trimToSize();
 	}
 
 	/**
@@ -108,6 +109,8 @@ public class PatriciaTrieNode implements Serializable {
 					p.frequency = 0;
 					addSon(p.sons, data, word.substring(pos), (byte) (wordLen
 							- pos), frequency);
+				} else {
+					p.sons.trimToSize();
 				}
 				return;
 			}
