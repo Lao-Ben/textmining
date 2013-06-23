@@ -73,10 +73,12 @@ public class MainCompiler {
 
 			FileOutputStream file = new FileOutputStream(args[1]);
 			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(gzipOut);
+			BufferedOutputStream bfout = new BufferedOutputStream(gzipOut);
+			ObjectOutputStream oos = new ObjectOutputStream(bfout);
 			oos.writeObject(tree);
 			oos.flush();
 			oos.close();
+			bfout.close();
 			gzipOut.close();
 			file.close();
 

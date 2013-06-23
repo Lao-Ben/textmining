@@ -1,5 +1,6 @@
 package app;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,7 +30,8 @@ public class MainApp {
 		try {
 			fich = new FileInputStream(args[0]);
 			GZIPInputStream gzipIn = new GZIPInputStream(fich);
-			ObjectInputStream oos = new ObjectInputStream(gzipIn);
+			BufferedInputStream bfin = new BufferedInputStream(gzipIn);
+			ObjectInputStream oos = new ObjectInputStream(bfin);
 			
 			System.out.println("Deserializing...");
 			long debut = System.currentTimeMillis();
@@ -38,6 +40,7 @@ public class MainApp {
 			long time = fin-debut;
 			System.out.println(time);
 			oos.close();
+			bfin.close();
 			gzipIn.close();
 			fich.close();
 			
