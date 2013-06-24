@@ -36,26 +36,32 @@ public class MainApp {
 			PatriciaTrie tree = (PatriciaTrie) oos.readObject();
 			long fin = System.currentTimeMillis();
 			long time = fin-debut;
-			System.out.println(time);
+			System.out.println("Deserialization time : " + time);
 			oos.close();
 			gzipIn.close();
 			fich.close();
-			
+			System.out.println("1");
 			InputStreamReader ipsr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(ipsr);
 			String ligne;
-			
+			System.out.println("2");			
 			int i = 0;
 			List<ResultSearch> results = new ArrayList<ResultSearch>();
 			while ((ligne = br.readLine()) != null) {
+				System.out.println("3");
 				String[] tab = ligne.split(" ");
 				String word = tab[2];
+				System.out.println("4");
 				int dist = Integer.valueOf(tab[1]);
+				System.out.println("5");
 				tree.search(word, dist, tree.getData().toString(), results);
+				System.out.println("6");
 				ResultSearch.exportJSon(results);
+				System.out.println("7");
 				results = new ArrayList<ResultSearch>();
 				i++;
 			}
+			System.out.println("Global time : " + (System.currentTimeMillis() - debut));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
