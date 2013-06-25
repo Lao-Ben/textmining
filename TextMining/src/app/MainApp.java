@@ -8,9 +8,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 
+import patricia_trie.Constant;
 import patricia_trie.PatriciaTrie;
 import patricia_trie.ResultSearch;
 
@@ -35,7 +43,7 @@ public class MainApp {
 			
 			System.out.println("Deserializing...");
 			long debut = System.currentTimeMillis();
-			PatriciaTrie tree = (PatriciaTrie) oos.readObject();
+			final PatriciaTrie tree = (PatriciaTrie) oos.readObject();
 			long fin = System.currentTimeMillis();
 			long time = fin-debut;
 			System.out.println(time);
@@ -48,17 +56,46 @@ public class MainApp {
 			BufferedReader br = new BufferedReader(ipsr);
 			String ligne;
 			
-			int i = 0;
-			List<ResultSearch> results = new ArrayList<ResultSearch>();
-			while ((ligne = br.readLine()) != null) {
-				String[] tab = ligne.split(" ");
-				String word = tab[2];
-				int dist = Integer.valueOf(tab[1]);
-				tree.search(word, dist, tree.getData().toString(), results);
-				ResultSearch.exportJSon(results);
-				results = new ArrayList<ResultSearch>();
-				i++;
-			}
+			List<Future<List<ResultSearch>>> listfuture = new ArrayList<Future<List<ResultSearch>>>();
+			//List<ResultSearch> results_synchr = Collections.synchronizedList(results);
+			//ExecutorService executorService = Executors.newCachedThreadPool();
+			//synchronized (results_synchr) {
+				while ((ligne = br.readLine()) != null) {
+					String[] tab = ligne.split(" ");
+					final String word = tab[2];
+					final int dist = Integer.valueOf(tab[1]);
+					Future<List<ResultSearch>> future = Constant.executor.submit(new Callable<List<ResultSearch>>() {
+						@Override
+						public List<ResultSearch> call() throws Exception {
+							return tree.search(word, dist, tree.getData().toString());
+						}
+					});
+					listfuture.add(future);
+					//results_synchr = Collections.synchronizedList(results);
+				}
+				boolean testFinish = false;
+				while(!testFinish)
+				{
+					int i = 0;
+					for (Future<?> f : listfuture)
+						if (f.isDone())
+							i++;
+					if (listfuture.size() == i)
+						testFinish = true;
+				}
+				for (Future<List<ResultSearch>> f : listfuture)
+					try {
+						ResultSearch.exportJSon(f.get());
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				Constant.executor.shutdown();
+				
+			//}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

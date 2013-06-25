@@ -214,7 +214,8 @@ public class Minion implements Runnable{
 		int oldKeyLen = keyLen;
 		int toBeCopied = Math.min(node.getLength(), wordLen + maxDistance
 				- keyLen);
-		key = key.substring(0,keyLen).concat(copy(treeData.substring(node.getStart()), toBeCopied));
+		key = key.substring(0,keyLen).concat(
+				copy(treeData.substring(node.getStart()), toBeCopied));
 		keyLen += toBeCopied;
 
 		// compute the distance
