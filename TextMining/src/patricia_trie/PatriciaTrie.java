@@ -2,7 +2,9 @@ package patricia_trie;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class PatriciaTrie implements Serializable {
 
@@ -56,9 +58,13 @@ public class PatriciaTrie implements Serializable {
 	 * @param treeData les donnees du patricia trie
 	 * @param collector la liste des resultats de la recherche
 	 */
-	public void search(String word, int maxDistance, String treeData,
-			List<ResultSearch> collector) {
-		root.search("", word, maxDistance, treeData, collector);
+	public List<ResultSearch> search(String word, int maxDistance, String treeData) {
+		List<ResultSearch> results = new ArrayList<ResultSearch>();
+		List<ResultSearch> results_synchr = Collections.synchronizedList(results);
+		synchronized (results_synchr) {
+			root.search("", word, maxDistance, treeData, results_synchr);
+		}
+		return results_synchr;
 	}
 	
 	public void trim()
