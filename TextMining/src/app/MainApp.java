@@ -8,17 +8,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 
-import patricia_trie.Constant;
 import patricia_trie.PatriciaTrie;
 import patricia_trie.ResultSearch;
 
@@ -51,7 +44,6 @@ public class MainApp {
 			bfin.close();
 			gzipIn.close();
 			fich.close();
-			System.out.println("1");
 			InputStreamReader ipsr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(ipsr);
 			String ligne;
@@ -66,37 +58,28 @@ public class MainApp {
 				String[] tab = ligne.split(" ");
 				final String word = tab[2];
 				final int dist = Integer.valueOf(tab[1]);
-				Future<List<ResultSearch>> future = Constant.executor
-						.submit(new Callable<List<ResultSearch>>() {
-							@Override
-							public List<ResultSearch> call() throws Exception {
-								return tree.search(word, dist, tree.getData()
-										.toString());
-							}
-						});
-				listfuture.add(future);
+				/*
+				 * Future<List<ResultSearch>> future = Constant.executor
+				 * .submit(new Callable<List<ResultSearch>>() {
+				 * 
+				 * @Override public List<ResultSearch> call() throws Exception {
+				 * return tree.search(word, dist, tree.getData() .toString()); }
+				 * }); listfuture.add(future);
+				 */
+				ResultSearch.exportJSon(tree.search(word, dist, tree.getData()
+						.toString()));
 				// results_synchr = Collections.synchronizedList(results);
 			}
-			boolean testFinish = false;
-			while (!testFinish) {
-				int i = 0;
-				for (Future<?> f : listfuture)
-					if (f.isDone())
-						i++;
-				if (listfuture.size() == i)
-					testFinish = true;
-			}
-			for (Future<List<ResultSearch>> f : listfuture)
-				try {
-					ResultSearch.exportJSon(f.get());
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			Constant.executor.shutdown();
+			/*
+			 * boolean testFinish = false; while (!testFinish) { int i = 0; for
+			 * (Future<?> f : listfuture) if (f.isDone()) i++; if
+			 * (listfuture.size() == i) testFinish = true; }
+			 * Constant.executor.shutdown(); for (Future<List<ResultSearch>> f :
+			 * listfuture) try { ResultSearch.exportJSon(f.get()); } catch
+			 * (InterruptedException e) { // TODO Auto-generated catch block
+			 * e.printStackTrace(); } catch (ExecutionException e) { // TODO
+			 * Auto-generated catch block e.printStackTrace(); }
+			 */
 			System.out.println("Global time : "
 					+ (System.currentTimeMillis() - debut));
 		} catch (FileNotFoundException e) {

@@ -201,7 +201,10 @@ public class Minion implements Runnable{
 		int nbSons = node.sons.size();
 
 		for (PatriciaTrieNode n : node.sons) {
-			browseNode0(n, keyLen);
+			root = n;
+			lengthkey = keyLen;
+			//browseNode(n, keyLen);
+			this.run();
 			nbSons--;
 		}
 	}
@@ -241,7 +244,10 @@ public class Minion implements Runnable{
 
 		int nbSons = node.sons.size();
 		for (PatriciaTrieNode n : node.sons) {
-			browseNode(n, keyLen);
+			root = n;
+			lengthkey = keyLen;
+			//browseNode(n, keyLen);
+			this.run();
 			nbSons--;
 		}
 		return;
