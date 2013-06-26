@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -56,7 +57,9 @@ public class MainApp {
 			BufferedReader br = new BufferedReader(ipsr);
 			String ligne;
 
-			List<Future<List<ResultSearch>>> listfuture = new ArrayList<Future<List<ResultSearch>>>();
+		//	ExecutorService executor = Executors.newFixedThreadPool(2);
+			
+//			List<Future<List<ResultSearch>>> listfuture = new ArrayList<Future<List<ResultSearch>>>();
 			// List<ResultSearch> results_synchr =
 			// Collections.synchronizedList(results);
 			// ExecutorService executorService =
@@ -66,37 +69,42 @@ public class MainApp {
 				String[] tab = ligne.split(" ");
 				final String word = tab[2];
 				final int dist = Integer.valueOf(tab[1]);
-				Future<List<ResultSearch>> future = Constant.executor
-						.submit(new Callable<List<ResultSearch>>() {
-							@Override
-							public List<ResultSearch> call() throws Exception {
-								return tree.search(word, dist, tree.getData()
-										.toString());
-							}
-						});
-				listfuture.add(future);
+				ResultSearch.exportJSon(tree.search(word, dist, tree.getData().toString()));
+			
+//				Runnable worker = new WorkerThread(word, dist, tree);
+		//		executor.execute(worker);
+//				Future<List<ResultSearch>> future = Constant.executor
+	//					.submit(new Callable<List<ResultSearch>>() {
+		//					@Override
+			//				public List<ResultSearch> call() throws Exception {
+				//				return tree.search(word, dist, tree.getData()
+					//					.toString());
+						//	}
+					//	});
+			//	listfuture.add(future);
 				// results_synchr = Collections.synchronizedList(results);
 			}
-			boolean testFinish = false;
-			while (!testFinish) {
-				int i = 0;
-				for (Future<?> f : listfuture)
-					if (f.isDone())
-						i++;
-				if (listfuture.size() == i)
-					testFinish = true;
-			}
-			for (Future<List<ResultSearch>> f : listfuture)
-				try {
-					ResultSearch.exportJSon(f.get());
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			Constant.executor.shutdown();
+//			boolean testFinish = false;
+//			while (!testFinish) {
+//				int i = 0;
+//				for (Future<?> f : listfuture)
+//					if (f.isDone())
+//						i++;
+//				if (listfuture.size() == i)
+//					testFinish = true;
+//			}
+//			for (Future<List<ResultSearch>> f : listfuture)
+//				try {
+//					ResultSearch.exportJSon(f.get());
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (ExecutionException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+	//		executor.shutdown();
+	//		while (!executor.isTerminated()) {}
 			System.out.println("Global time : "
 					+ (System.currentTimeMillis() - debut));
 		} catch (FileNotFoundException e) {
@@ -112,4 +120,28 @@ public class MainApp {
 
 	}
 
+}
+
+class WorkerThread implements Runnable {
+
+    private String word;
+    private int dist;
+    private PatriciaTrie tree;
+    public StringBuilder res;
+    
+    public WorkerThread(String w, int d, PatriciaTrie t) {
+        word = w;
+        dist = d;
+        tree = t;
+    }
+
+    @Override
+    public void run() {
+    	res = ResultSearch.exportJSon(tree.search(word, dist, tree.getData().toString()));
+    }
+
+    @Override
+    public String toString(){
+        return res.toString();
+    }
 }
