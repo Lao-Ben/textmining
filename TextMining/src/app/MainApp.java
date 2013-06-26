@@ -61,8 +61,10 @@ public class MainApp {
 				 * return tree.search(word, dist, tree.getData() .toString()); }
 				 * }); listfuture.add(future);
 				 */
+				//WorkerThread th = new WorkerThread(word, dist, tree);
 				ResultSearch.exportJSon(tree.search(word, dist, tree.getData()
 						.toString()));
+				//th.run();
 				// results_synchr = Collections.synchronizedList(results);
 			}
 			/*
@@ -108,7 +110,7 @@ class WorkerThread implements Runnable {
 
     @Override
     public void run() {
-    	res = ResultSearch.exportJSon(tree.search(word, dist, tree.getData().toString()));
+    	ResultSearch.exportJSon(tree.search(word, dist, tree.getData().toString()));
     }
 
     @Override
