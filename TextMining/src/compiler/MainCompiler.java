@@ -14,7 +14,7 @@ public class MainCompiler {
 		long start = System.currentTimeMillis();
 
 		// Check parameters
-		if (args.length < 2) {
+		if (args.length != 2) {
 			System.out
 					.println("Usage: TextMiningCompiler /path/to/word/word.txt /path/to/output/dict.bin");
 			return;
