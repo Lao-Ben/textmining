@@ -1,17 +1,18 @@
 package patricia_trie;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
-public class PatriciaTrie implements Serializable {
+public class PatriciaTrie implements Externalizable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5570840938703266587L;
+//	private static final long serialVersionUID = -5570840938703266587L;
 	PatriciaTrieNode root;
 	StringBuilder data;
 
@@ -58,13 +59,13 @@ public class PatriciaTrie implements Serializable {
 	 * @param treeData les donnees du patricia trie
 	 * @param collector la liste des resultats de la recherche
 	 */
-	public List<ResultSearch> search(String word, int maxDistance, String treeData) {
+	public List<ResultSearch> search(StringBuilder word, int maxDistance) {
 		List<ResultSearch> results = new ArrayList<ResultSearch>();
-		List<ResultSearch> results_synchr = Collections.synchronizedList(results);
-		synchronized (results_synchr) {
-			root.search("", word, maxDistance, treeData, results_synchr);
-		}
-		return results_synchr;
+//		List<ResultSearch> results_synchr = Collections.synchronizedList(results);
+		//synchronized (results_synchr) {
+			root.search("", word, maxDistance, data, results);
+		//}
+		return results;
 	}
 	
 	public void trim()
@@ -77,6 +78,19 @@ public class PatriciaTrie implements Serializable {
 	public void print()
 	{
 		root.print(getData().toString());
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		root = (PatriciaTrieNode)in.readObject();
+		data = (StringBuilder)in.readObject();
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeObject(root);
+		out.writeObject(data);
 	}
 }
 

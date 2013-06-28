@@ -3,12 +3,13 @@ package patricia_trie;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Minion implements Runnable{
-	String word;
+//public class Minion implements Runnable{
+public class Minion {
+	StringBuilder word;
 
-	String treeData;
+	StringBuilder treeData;
 
-	String key;
+	StringBuilder key;
 
 	int[][] cmpTable;
 
@@ -86,7 +87,7 @@ public class Minion implements Runnable{
 		System.out.println();
 	}
 
-	void configure(PatriciaTrieNode root, String word, int maxDistance, int lengthkey, String treeData, List<ResultSearch> collectors) {
+	void configure(PatriciaTrieNode root, StringBuilder word, int maxDistance, int lengthkey, StringBuilder treeData, List<ResultSearch> collectors) {
 		// log("being configured...");
 		this.root = root;
 		this.word = word;
@@ -101,7 +102,7 @@ public class Minion implements Runnable{
 		// Redim the key buffer if too small
 		int keyBuff = wordLen + maxDistance;
 		if (keyBuff > keyBufferSize) {
-			key = new String(new char[keyBuff]);
+			key = new StringBuilder(keyBuff);
 			keyBufferSize = keyBuff;
 		}
 
@@ -125,7 +126,7 @@ public class Minion implements Runnable{
 	}
 
 	void calculateDistance(int oldKeyLen, int keyLen,
-			MyObject<Integer> minDistance, MyObject<Integer> realDistance) {
+			Integer minDistance, Integer realDistance) {
 		// Partial Damerau-Levenshtein distance
 		int iStart;
 		if (oldKeyLen < maxDistance + 1)
@@ -159,9 +160,9 @@ public class Minion implements Runnable{
 							);
 			}
 		if (minDistance != null)
-			minDistance.setObj(cmpTable[keyLen][keyLen]);
+			minDistance = cmpTable[keyLen][keyLen];
 		if (realDistance != null)
-			realDistance.setObj(cmpTable[wordLen][keyLen]);
+			realDistance = cmpTable[wordLen][keyLen];
 	}
 	
 	int strncmp(String s1, String s2, int length)
@@ -187,14 +188,14 @@ public class Minion implements Runnable{
 		if (strncmp(word.substring(keyLen), treeData.substring(node.getStart()), nodeStrLength) != 0)
 			return; // The two strings are different
 
-		key = key.substring(0,keyLen).concat(copy(treeData.substring(node.getStart()), nodeStrLength));
+		key = new StringBuilder(key.substring(0,keyLen));
+		key.append(treeData.substring(node.getStart()), 0, nodeStrLength);
 		keyLen += nodeStrLength;
 
 		if (keyLen == wordLen) {
 			int freq = node.frequency;
 			if (freq > 0) {
-				String str = key;
-				ResultSearch result = new ResultSearch(str, 0, freq);
+				ResultSearch result = new ResultSearch(key, 0, freq);
 				collector.add(result);
 			}
 		}
@@ -204,7 +205,7 @@ public class Minion implements Runnable{
 			root = n;
 			lengthkey = keyLen;
 			//browseNode(n, keyLen);
-			this.run();
+			this.browse();
 			nbSons--;
 		}
 	}
@@ -217,27 +218,27 @@ public class Minion implements Runnable{
 		int oldKeyLen = keyLen;
 		int toBeCopied = Math.min(node.getLength(), wordLen + maxDistance
 				- keyLen);
-		key = key.substring(0,keyLen).concat(
-				copy(treeData.substring(node.getStart()), toBeCopied));
+		key = new StringBuilder(key.substring(0,keyLen));
+		key.append(treeData.substring(node.getStart()), 0, toBeCopied);
 		keyLen += toBeCopied;
 
 		// compute the distance
-		MyObject<Integer> minDistance = new MyObject<Integer>(0);
-		MyObject<Integer> realDistance = new MyObject<Integer>(0);
+		Integer minDistance = new Integer(0);
+		Integer realDistance = new Integer(0);
 		calculateDistance(oldKeyLen, keyLen, minDistance, realDistance);
 
-		if (minDistance.getObj() > 2 * maxDistance) {
+		if (minDistance > 2 * maxDistance) {
 			return; // No chance to match
 		}
 
 		// Add to results if the node means a word
 
 		if (keyLen >= wordLen - maxDistance
-				&& realDistance.getObj() <= maxDistance) {
+				&& realDistance <= maxDistance) {
 			int freq = node.getFrequency();
 			if (freq > 0) {
 				ResultSearch result = new ResultSearch(key,
-						realDistance.getObj(), freq);
+						realDistance, freq);
 				collector.add(result);
 			}
 		}
@@ -247,14 +248,13 @@ public class Minion implements Runnable{
 			root = n;
 			lengthkey = keyLen;
 			//browseNode(n, keyLen);
-			this.run();
+			this.browse();
 			nbSons--;
 		}
 		return;
 	}
 
-	@Override
-	public void run() {
+	public void browse() {
 		// TODO Auto-generated method stub
 		if (maxDistance == 0) {
 			browseNode0(root, lengthkey);
