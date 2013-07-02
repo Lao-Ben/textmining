@@ -7,6 +7,7 @@ import patricia_trie.PatriciaTrie;
 
 public class MainCompiler {
 
+	public static Integer indice = 0;
 	/**
 	 * @param args
 	 */

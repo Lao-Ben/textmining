@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
+import compiler.MainCompiler;
 
 public class PatriciaTrieNode implements Externalizable {
 
@@ -14,43 +15,43 @@ public class PatriciaTrieNode implements Externalizable {
 	 */
 //	private static final long serialVersionUID = -6873191676473588179L;
 
-	ArrayList<PatriciaTrieNode> sons;
+	protected ArrayList<PatriciaTrieNode> s;
+	protected CharSequence w;
+	protected int f;
 
-	protected int start;
-	protected byte length;
-	protected int frequency;
-
+	
 	/**
 	 * 
 	 */
 	public PatriciaTrieNode() {
 		super();
-		sons = new ArrayList<PatriciaTrieNode>();
-		start = 0;
-		frequency = 0;
-		length = 0;
+		s = new ArrayList<PatriciaTrieNode>();
+		f = 0;
 	}
 
 	/**
-	 * 
-	 * @param start
-	 * @param length
+	 *
+	 * @param word
 	 * @param frequency
 	 */
-	public PatriciaTrieNode(int start, byte length, int frequency) {
+	public PatriciaTrieNode(CharSequence word, int freq) {
 		super();
-		sons = new ArrayList<PatriciaTrieNode>();
-		this.start = start;
-		this.frequency = frequency;
-		this.length = length;
+		s = new ArrayList<PatriciaTrieNode>();
+		w = word;
+		f = freq;
 	}
-	
-	public PatriciaTrieNode(int start, byte length, int frequency, ArrayList<PatriciaTrieNode> sons) {
+
+	/**
+	 *
+	 * @param word
+	 * @param frequency
+	 * @param sons
+	 */
+	public PatriciaTrieNode(CharSequence word, int freq, ArrayList<PatriciaTrieNode> sons) {
 		super();
-		this.sons = new ArrayList<PatriciaTrieNode>(sons);
-		this.start = start;
-		this.frequency = frequency;
-		this.length = length;
+		s = new ArrayList<PatriciaTrieNode>(sons);
+		w = word;
+		f = freq;
 	}
 
 	/**
@@ -62,17 +63,9 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param frequency
 	 * @return
 	 */
-	void addSon(ArrayList<PatriciaTrieNode> sons, StringBuilder data, String word,
-			byte wordLen, int frequency) {
-		int pos = data.length();
-		PatriciaTrieNode node;
-		if ((pos = data.indexOf(word)) != -1)
-			node = new PatriciaTrieNode(pos, wordLen, frequency);
-		else {
-			node = new PatriciaTrieNode(data.length(), wordLen, frequency);
-			data.append(word);
-		}
-		sons.add(node);
+	static void addSon(ArrayList<PatriciaTrieNode> nodes, String word, int frequency) {
+		PatriciaTrieNode node = new PatriciaTrieNode(word, frequency);
+		nodes.add(node);
 	}
 
 	/**
@@ -83,53 +76,55 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param data
 	 * @return
 	 */
-	void insert(String word, byte wordLen, int frequency, StringBuilder data) {
-		for (PatriciaTrieNode p : sons) {
-			if (data.length() > 0 && data.charAt(p.start) == word.charAt(0)) {
-				byte keyLen = p.length;
+	void insert(String word, int freq) {
+		for (PatriciaTrieNode p : s) {
+			// if trie not empty
+			// and word's first letter == current node first letter 
+			if (p.w.charAt(0) == word.charAt(0)) {
+				int keyLen = p.w.length();
 				byte pos;
-				for (pos = 0; pos < wordLen && pos < keyLen
-						&& word.charAt(pos) == data.charAt(p.start + pos); pos++)
+				
+				// get the pos of first different char
+				for (pos = 0; pos < word.length() && pos < keyLen
+						&& word.charAt(pos) == p.w.charAt(pos); pos++)
 					;
-				if (pos == keyLen && pos == wordLen) {
-					p.frequency = frequency;
+				
+				// if position > end of word
+				if (pos == keyLen && pos == word.length()) {
+					p.f = freq;
 					return;
 				}
 
+				// if current node's word is a prefix of the word
 				if (pos >= keyLen) {
-					p.insert(word.substring(keyLen), (byte) (wordLen - keyLen),
-							frequency, data);
+					p.insert(word.substring(keyLen), freq);
 					return;
 				}
-				PatriciaTrieNode newNode = new PatriciaTrieNode(p.start + pos,
-						(byte) (keyLen - pos), p.frequency, p.sons);
-				p.length = pos;
-				p.frequency = frequency;
-				p.sons.clear();
-				p.sons.add(newNode);
+				
+				// current node's word and the word have the same prefix
+				//					n937	    n936        3              4                        7      
+//				System.out.println(word + " " + p.w + " " + pos + " " + keyLen + " " + word.substring(pos));
+				PatriciaTrieNode newNode = new PatriciaTrieNode(p.w.subSequence(pos, keyLen), p.f, p.s);
+//				System.out.println("//");
+				p.w = word.subSequence(0, pos);
+	//			System.out.println("//");
+				p.f = freq;
+				p.s.clear();
+				p.s.add(newNode);
 
-				if (pos < wordLen) {
-					p.frequency = 0;
-					addSon(p.sons, data, word.substring(pos), (byte) (wordLen
-							- pos), frequency);
+				if (pos < word.length()) {
+					p.f = 0;
+					addSon(p.s, word.substring(pos), freq);
 				}
 				return;
 			}
 		}
-		addSon(sons, data, word, wordLen, frequency);
+		addSon(s, word, freq);
 		return;
 	}
 
-	public int getStart() {
-		return start;
-	}
-
 	public int getFrequency() {
-		return frequency;
-	}
-
-	public int getLength() {
-		return length;
+		return f;
 	}
 
 	/**
@@ -140,16 +135,15 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param treeData
 	 * @param collector
 	 */
-	void search(String prefix, StringBuilder word, int maxDistance, StringBuilder treeData,
+	void search(String prefix, StringBuilder word, int maxDistance,
 			List<ResultSearch> collector) {
 		/*ExecutorService executor = Executors.newCachedThreadPool();
 		synchronized (collector) {*/
-			for (PatriciaTrieNode n : sons) {
+			for (PatriciaTrieNode n : s) {
 				Minion m = new Minion();
-				m.configure(n, word, maxDistance, prefix.length(), treeData,
-						collector);
+				m.configure(n, word, -1, -1, maxDistance, prefix.length(), collector);
 				if (maxDistance > 0)
-					m.calculateDistance(0, prefix.length(), null, null);
+					m.calculateDistance(0, prefix.length());
 				/*executor.execute(m);
 				executor.shutdown();*/
 				m.browse();
@@ -160,20 +154,19 @@ public class PatriciaTrieNode implements Externalizable {
 	}
 	
 	public void recursiveTrim() {
-		if (sons == null || sons.isEmpty())
+		if (s == null || s.isEmpty())
 			return;
-		sons.trimToSize();
-		
-		for (PatriciaTrieNode son : sons) {
+		s.trimToSize();
+		for (PatriciaTrieNode son : s) {
 			son.recursiveTrim();
 		}
 	}
 	
 	void print(String data)
 	{
-		System.out.print("{"+data.substring(start, start+length)+"("+sons.size()+")"+" : ");
-		if (sons.size() > 0)
-			for(PatriciaTrieNode n : sons)
+		System.out.print("{"+w+"("+s.size()+")"+" : ");
+		if (s.size() > 0)
+			for(PatriciaTrieNode n : s)
 				n.print(data);
 		System.out.print("}");
 	}
@@ -182,17 +175,15 @@ public class PatriciaTrieNode implements Externalizable {
 	@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
-		start = in.readInt();
-		frequency = in.readInt();
-		length = in.readByte();
-		sons = (ArrayList<PatriciaTrieNode>)in.readObject();
+		s = (ArrayList<PatriciaTrieNode>)in.readObject();
+		w = (String)in.readObject();
+		f = in.readInt();
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeInt(start);
-		out.writeInt(frequency);
-		out.writeByte(length);
-		out.writeObject(this.sons);		
+		out.writeObject(s);
+		out.writeObject(w);
+		out.writeInt(f);
 	}
 }

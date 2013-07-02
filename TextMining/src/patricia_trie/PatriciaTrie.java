@@ -14,7 +14,6 @@ public class PatriciaTrie implements Externalizable {
 	 */
 //	private static final long serialVersionUID = -5570840938703266587L;
 	PatriciaTrieNode root;
-	StringBuilder data;
 
 	/**
 	 * Constructeur
@@ -22,7 +21,6 @@ public class PatriciaTrie implements Externalizable {
 	public PatriciaTrie() {
 		super();
 		root = new PatriciaTrieNode();
-		data = new StringBuilder();
 	}
 	
 	/**
@@ -32,16 +30,7 @@ public class PatriciaTrie implements Externalizable {
 	 */
 	public void insert(String word, int frequency)
 	{
-		root.insert(word, (byte) word.length(), frequency, data);
-	}
-	
-	/**
-	 * Retourne les donnees du patricia trie
-	 * @return les donnees du tableau pour le patricia trie
-	 */
-	public StringBuilder getData()
-	{
-		return data;
+		root.insert(word, frequency);
 	}
 	
 	/**
@@ -63,7 +52,7 @@ public class PatriciaTrie implements Externalizable {
 		List<ResultSearch> results = new ArrayList<ResultSearch>();
 //		List<ResultSearch> results_synchr = Collections.synchronizedList(results);
 		//synchronized (results_synchr) {
-			root.search("", word, maxDistance, data, results);
+			root.search("", word, maxDistance, results);
 		//}
 		return results;
 	}
@@ -71,26 +60,24 @@ public class PatriciaTrie implements Externalizable {
 	public void trim()
 	{
 		root.recursiveTrim();
-		data.trimToSize();
 	}
 
 	
 	public void print()
 	{
-		root.print(getData().toString());
+		// TODO: implement print method
+		//root.print(getData().toString());
 	}
 
 	@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 		root = (PatriciaTrieNode)in.readObject();
-		data = (StringBuilder)in.readObject();
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeObject(root);
-		out.writeObject(data);
 	}
 }
 

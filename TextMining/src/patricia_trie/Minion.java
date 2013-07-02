@@ -6,18 +6,21 @@ import java.util.List;
 //public class Minion implements Runnable{
 public class Minion {
 	StringBuilder word;
-
-	StringBuilder treeData;
-
 	StringBuilder key;
 
 	int[][] cmpTable;
 
 	int keyBufferSize;
 	int wordLen;
+	
+	int minDistance;
+	int realDistance;
 	int maxDistance;
+	
 	int cmpTableSize;
 	int cmpTableActualSize;
+
+	
 	boolean isIdle;
 	List<ResultSearch> collector;
 	
@@ -32,6 +35,8 @@ public class Minion {
 		cmpTableActualSize = 0;
 		key = null;
 		keyBufferSize = 0;
+		minDistance = 0;
+		realDistance = 0;
 		isIdle = true;
 		collector = new ArrayList<ResultSearch>();
 		lengthkey = 0;
@@ -87,12 +92,13 @@ public class Minion {
 		System.out.println();
 	}
 
-	void configure(PatriciaTrieNode root, StringBuilder word, int maxDistance, int lengthkey, StringBuilder treeData, List<ResultSearch> collectors) {
+	void configure(PatriciaTrieNode root, StringBuilder word, int minDistance, int realDistance, int maxDistance, int lengthkey, List<ResultSearch> collectors) {
 		// log("being configured...");
 		this.root = root;
 		this.word = word;
+		this.minDistance = minDistance;
+		this.realDistance = realDistance;
 		this.maxDistance = maxDistance;
-		this.treeData = treeData;
 		this.lengthkey = lengthkey;
 
 		this.wordLen = word.length();
@@ -125,8 +131,7 @@ public class Minion {
 		}
 	}
 
-	void calculateDistance(int oldKeyLen, int keyLen,
-			Integer minDistance, Integer realDistance) {
+	void calculateDistance(int oldKeyLen, int keyLen) {
 		// Partial Damerau-Levenshtein distance
 		int iStart;
 		if (oldKeyLen < maxDistance + 1)
@@ -159,9 +164,9 @@ public class Minion {
 							(cmpTable[i - 2][j - 2] + dist) // transposition
 							);
 			}
-		if (minDistance != null)
+		if (minDistance != -1)
 			minDistance = cmpTable[keyLen][keyLen];
-		if (realDistance != null)
+		if (realDistance != -1)
 			realDistance = cmpTable[wordLen][keyLen];
 	}
 	
@@ -181,51 +186,55 @@ public class Minion {
 	}
 	
 	void browseNode0(PatriciaTrieNode node, int keyLen) {
-		int nodeStrLength = node.getLength();
+		int nodeStrLength = node.w.length();
 		if (keyLen + nodeStrLength > wordLen)
 			return; // No chance to fit
 
-		if (strncmp(word.substring(keyLen), treeData.substring(node.getStart()), nodeStrLength) != 0)
+		if (!word.substring(keyLen).startsWith(node.w.toString()))
 			return; // The two strings are different
 
+		System.out.println(key);
+		
 		key = new StringBuilder(key.substring(0,keyLen));
-		key.append(treeData.substring(node.getStart()), 0, nodeStrLength);
+		key.append(node.w);
 		keyLen += nodeStrLength;
-
+		
+		System.out.println(node.w + " " + key);
+		
+		System.out.println(wordLen + " " + keyLen);
+		
 		if (keyLen == wordLen) {
-			int freq = node.frequency;
+			System.out.println("found // f:" + node.f);
+			int freq = node.f;
 			if (freq > 0) {
 				ResultSearch result = new ResultSearch(key, 0, freq);
 				collector.add(result);
 			}
 		}
-		int nbSons = node.sons.size();
-
-		for (PatriciaTrieNode n : node.sons) {
+		for (PatriciaTrieNode n : node.s) {
 			root = n;
 			lengthkey = keyLen;
 			//browseNode(n, keyLen);
 			this.browse();
-			nbSons--;
 		}
 	}
 
 	void browseNode(PatriciaTrieNode node, int keyLen) {
-		if (keyLen + node.getLength() > wordLen + maxDistance) {
+		if (keyLen + node.w.length() > wordLen + maxDistance) {
 			return; // No chance to do better
 		}
 
 		int oldKeyLen = keyLen;
-		int toBeCopied = Math.min(node.getLength(), wordLen + maxDistance
+		int toBeCopied = Math.min(node.w.length(), wordLen + maxDistance
 				- keyLen);
 		key = new StringBuilder(key.substring(0,keyLen));
-		key.append(treeData.substring(node.getStart()), 0, toBeCopied);
+		key.append(node.w, 0, toBeCopied);
 		keyLen += toBeCopied;
 
 		// compute the distance
-		Integer minDistance = new Integer(0);
-		Integer realDistance = new Integer(0);
-		calculateDistance(oldKeyLen, keyLen, minDistance, realDistance);
+		minDistance = 0;
+		realDistance = 0;
+		calculateDistance(oldKeyLen, keyLen);
 
 		if (minDistance > 2 * maxDistance) {
 			return; // No chance to match
@@ -243,19 +252,16 @@ public class Minion {
 			}
 		}
 
-		int nbSons = node.sons.size();
-		for (PatriciaTrieNode n : node.sons) {
+		for (PatriciaTrieNode n : node.s) {
 			root = n;
 			lengthkey = keyLen;
 			//browseNode(n, keyLen);
 			this.browse();
-			nbSons--;
 		}
 		return;
 	}
 
 	public void browse() {
-		// TODO Auto-generated method stub
 		if (maxDistance == 0) {
 			browseNode0(root, lengthkey);
 		} else {
