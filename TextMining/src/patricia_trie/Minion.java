@@ -193,18 +193,11 @@ public class Minion {
 		if (!word.substring(keyLen).startsWith(node.w.toString()))
 			return; // The two strings are different
 
-		System.out.println(key);
-		
 		key = new StringBuilder(key.substring(0,keyLen));
 		key.append(node.w);
 		keyLen += nodeStrLength;
-		
-		System.out.println(node.w + " " + key);
-		
-		System.out.println(wordLen + " " + keyLen);
-		
+				
 		if (keyLen == wordLen) {
-			System.out.println("found // f:" + node.f);
 			int freq = node.f;
 			if (freq > 0) {
 				ResultSearch result = new ResultSearch(key, 0, freq);

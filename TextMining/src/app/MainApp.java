@@ -99,7 +99,7 @@ public class MainApp {
 			for (Worker worker : workers) {
 				res.append(worker.res);
 			}
-			System.out.println(res);
+	//		System.out.println(res);
 			
 			System.out.println("Global time : "
 					+ (System.currentTimeMillis() - debut));

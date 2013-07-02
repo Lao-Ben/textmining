@@ -6,7 +6,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
-import compiler.MainCompiler;
 
 public class PatriciaTrieNode implements Externalizable {
 
@@ -102,12 +101,8 @@ public class PatriciaTrieNode implements Externalizable {
 				}
 				
 				// current node's word and the word have the same prefix
-				//					n937	    n936        3              4                        7      
-//				System.out.println(word + " " + p.w + " " + pos + " " + keyLen + " " + word.substring(pos));
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.w.subSequence(pos, keyLen), p.f, p.s);
-//				System.out.println("//");
 				p.w = word.subSequence(0, pos);
-	//			System.out.println("//");
 				p.f = freq;
 				p.s.clear();
 				p.s.add(newNode);
