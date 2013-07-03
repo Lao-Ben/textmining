@@ -185,6 +185,20 @@ public class PatriciaTrieNode implements Externalizable {
 		out.writeObject(w);
 		out.writeInt(f);
 		w = null;
+		for (PatriciaTrieNode son : s) {
+			son = null;
+		}
+		s = null;
+		if (PatriciaTrieSingleton.getInstance().gcStep++ >= 2430000) {
+			Runtime runtime = Runtime.getRuntime();
+//			System.out.println(PatriciaTrieSingleton.getInstance().gcStep + " " + runtime.freeMemory() / (1024*1024));
+//			System.out.println("max " + runtime.maxMemory() / (1024*1024));
+//			System.out.println("tot " + runtime.totalMemory() / (1024*1024));
+			if (runtime.freeMemory() < 80000000) {
+				System.out.println("gc " + runtime.freeMemory() / (1024*1024));
+				System.gc();
+			}
+		}
 	}
 	
 	private void replaceByCachedSequence() {

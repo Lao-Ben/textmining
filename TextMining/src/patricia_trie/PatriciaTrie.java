@@ -13,8 +13,8 @@ public class PatriciaTrie implements Externalizable {
 
 	private PatriciaTrieNode root;
 	
-	public HashMap<ByteCharSequence, PatriciaTrieNode> map;
-	
+	public transient HashMap<ByteCharSequence, PatriciaTrieNode> map;
+	public transient int gcStep = 0; 
 	/**
 	 * Constructeur
 	 */

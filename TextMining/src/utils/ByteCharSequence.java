@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
  * @author peyotll
  *
  */
-public class ByteCharSequence implements CharSequence, Serializable, Comparable {
+public class ByteCharSequence implements CharSequence, Serializable, Comparable<ByteCharSequence> {
 	static final long serialVersionUID = 1L;
 
 	private static final String ENCODING = "ISO-8859-1";
@@ -89,9 +89,7 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable 
 	}
 
 	@Override
-	public int compareTo(Object o) {
-		ByteCharSequence s = (ByteCharSequence)o;
-
+	public int compareTo(ByteCharSequence s) {
 		int cmp = length() - s.length();
 		if (cmp != 0) return cmp;
 		
