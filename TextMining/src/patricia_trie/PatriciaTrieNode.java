@@ -170,21 +170,33 @@ public class PatriciaTrieNode implements Externalizable {
 		System.out.print("}");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
-		s = (ArrayList<PatriciaTrieNode>)in.readObject();
+		int size = in.read();
+		s = new ArrayList<PatriciaTrieNode>();
+		for (int i = 0; i < size; i++) {
+			s.add((PatriciaTrieNode)in.readObject());
+		}
+//		s = (ArrayList<PatriciaTrieNode>)in.readObject();
+//		Object array = in.readObject();
+//		System.out.println(this.getClass().getName());
+//		s = new ArrayList<PatriciaTrieNode>(Arrays.asList((PatriciaTrieNode[])array));
 		w = (ByteCharSequence)in.readObject();
 		f = in.readInt();
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeObject(s);
+		out.write(s.size());
+		for (PatriciaTrieNode son : s) {
+			out.writeObject(son);
+		}
+//		out.writeObject(s.toArray());
 		out.writeObject(w);
 		out.writeInt(f);
 		w = null;
+	
 		for (PatriciaTrieNode son : s) {
 			son = null;
 		}

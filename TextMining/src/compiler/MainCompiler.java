@@ -51,10 +51,10 @@ public class MainCompiler {
 		            
 //		  System.out.println("Used Memory in JVM: " + (maxMemory - freeMemory) + "/" + maxMemory + " " + totalMemory);
 
-		            long fin = System.currentTimeMillis();
-					long time = fin-debut;
-					System.out.println(i+" "+time);
-					debut = System.currentTimeMillis();
+//		            long fin = System.currentTimeMillis();
+//					long time = fin-debut;
+//					System.out.println(i+" "+time);
+//					debut = System.currentTimeMillis();
 				}
 			}
 			
@@ -72,7 +72,6 @@ public class MainCompiler {
 			// force GC. Useless?
 			System.gc();
 			
-			System.out.println("Serializing...");
 			debut = System.currentTimeMillis();
 
 			FileOutputStream file = new FileOutputStream(args[1]);

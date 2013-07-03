@@ -35,15 +35,15 @@ public class MainApp {
 			fich = new FileInputStream(args[0]);
 			GZIPInputStream gzipIn = new GZIPInputStream(fich);
 			BufferedInputStream bfin = new BufferedInputStream(gzipIn);
-			ObjectInputStream oos = new ObjectInputStream(bfin);
+			ObjectInputStream ois = new ObjectInputStream(bfin);
 
 			System.out.println("Deserializing...");
 			long debut = System.currentTimeMillis();
-			final PatriciaTrie tree = (PatriciaTrie) oos.readObject();
+			final PatriciaTrie tree = (PatriciaTrie) ois.readObject();
 			long fin = System.currentTimeMillis();
 			long time = fin - debut;
 			System.out.println("Deserialization time : " + time);
-			oos.close();
+			ois.close();
 			bfin.close();
 			gzipIn.close();
 			fich.close();
@@ -51,7 +51,8 @@ public class MainApp {
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
 
-	        ExecutorService executor = Executors.newFixedThreadPool(8);
+			System.out.println("cpu threads :" + Runtime.getRuntime().availableProcessors());
+	        ExecutorService executor = Executors.newFixedThreadPool(120);
 
 	        final List<Worker> workers = new ArrayList<Worker>();
 	        
