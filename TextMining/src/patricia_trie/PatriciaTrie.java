@@ -5,22 +5,23 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import utils.ByteCharSequence;
 
 public class PatriciaTrie implements Externalizable {
 
-	/**
-	 * 
-	 */
-//	private static final long serialVersionUID = -5570840938703266587L;
-	PatriciaTrieNode root;
-
+	private PatriciaTrieNode root;
+	
+	public HashMap<ByteCharSequence, PatriciaTrieNode> map;
+	
 	/**
 	 * Constructeur
 	 */
 	public PatriciaTrie() {
 		super();
 		root = new PatriciaTrieNode();
+		map = new HashMap<ByteCharSequence, PatriciaTrieNode>();
 	}
 	
 	/**
@@ -28,7 +29,7 @@ public class PatriciaTrie implements Externalizable {
 	 * @param word le mot a inserer
 	 * @param frequency la frequence du mot
 	 */
-	public void insert(String word, int frequency)
+	public void insert(ByteCharSequence word, int frequency)
 	{
 		root.insert(word, frequency);
 	}

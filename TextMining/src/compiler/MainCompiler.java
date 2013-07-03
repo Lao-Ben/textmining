@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
 import patricia_trie.PatriciaTrie;
+import patricia_trie.PatriciaTrieSingleton;
+import utils.ByteCharSequence;
 
 public class MainCompiler {
 
@@ -27,18 +29,18 @@ public class MainCompiler {
 			ips = new FileInputStream(fichier);
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
-			String ligne;
+			String line;
 
-			PatriciaTrie tree = new PatriciaTrie();
+			PatriciaTrie tree = PatriciaTrieSingleton.getInstance();
 			int i = 0;
 
 			//final int MegaBytes = 1024*1024;
 			
 			long debut = System.currentTimeMillis();
-			while ((ligne = br.readLine()) != null) {
-				int index = ligne.indexOf("\t");
-				String word = ligne.substring(0, index);
-				int freq = Integer.valueOf(ligne.substring(index + 1));
+			while ((line = br.readLine()) != null) {
+				int index = line.indexOf("\t");
+				ByteCharSequence word = new ByteCharSequence(line.substring(0, index));
+				int freq = Integer.valueOf(line.substring(index + 1));
 				tree.insert(word, freq);
 				i++;
 				if (i % 10000 == 0)
@@ -64,6 +66,8 @@ public class MainCompiler {
 			tree.trim();
 			System.out.println("trimming time : " + (System.currentTimeMillis() - debut));
 
+
+			tree.map = null;
 			
 			// force GC. Useless?
 			System.gc();

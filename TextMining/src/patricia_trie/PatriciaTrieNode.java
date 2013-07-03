@@ -6,18 +6,13 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
+import utils.ByteCharSequence;
 
 public class PatriciaTrieNode implements Externalizable {
 
-	/**
-	 * 
-	 */
-//	private static final long serialVersionUID = -6873191676473588179L;
-
 	protected ArrayList<PatriciaTrieNode> s;
-	protected CharSequence w;
+	protected ByteCharSequence w;
 	protected int f;
-
 	
 	/**
 	 * 
@@ -25,6 +20,7 @@ public class PatriciaTrieNode implements Externalizable {
 	public PatriciaTrieNode() {
 		super();
 		s = new ArrayList<PatriciaTrieNode>();
+		w = null;
 		f = 0;
 	}
 
@@ -33,11 +29,12 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param word
 	 * @param frequency
 	 */
-	public PatriciaTrieNode(CharSequence word, int freq) {
+	public PatriciaTrieNode(ByteCharSequence word, int freq) {
 		super();
 		s = new ArrayList<PatriciaTrieNode>();
 		w = word;
 		f = freq;
+		replaceByCachedSequence();
 	}
 
 	/**
@@ -46,11 +43,12 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param frequency
 	 * @param sons
 	 */
-	public PatriciaTrieNode(CharSequence word, int freq, ArrayList<PatriciaTrieNode> sons) {
+	public PatriciaTrieNode(ByteCharSequence word, int freq, ArrayList<PatriciaTrieNode> sons) {
 		super();
 		s = new ArrayList<PatriciaTrieNode>(sons);
 		w = word;
 		f = freq;
+		replaceByCachedSequence();
 	}
 
 	/**
@@ -62,7 +60,7 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param frequency
 	 * @return
 	 */
-	static void addSon(ArrayList<PatriciaTrieNode> nodes, String word, int frequency) {
+	static void addSon(ArrayList<PatriciaTrieNode> nodes, ByteCharSequence word, int frequency) {
 		PatriciaTrieNode node = new PatriciaTrieNode(word, frequency);
 		nodes.add(node);
 	}
@@ -75,41 +73,42 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param data
 	 * @return
 	 */
-	void insert(String word, int freq) {
+	void insert(ByteCharSequence word, int freq) {
 		for (PatriciaTrieNode p : s) {
 			// if trie not empty
 			// and word's first letter == current node first letter 
 			if (p.w.charAt(0) == word.charAt(0)) {
 				int keyLen = p.w.length();
+				int wordLen = word.length();
 				byte pos;
 				
 				// get the pos of first different char
-				for (pos = 0; pos < word.length() && pos < keyLen
+				for (pos = 0; pos < wordLen && pos < keyLen
 						&& word.charAt(pos) == p.w.charAt(pos); pos++)
 					;
 				
 				// if position > end of word
-				if (pos == keyLen && pos == word.length()) {
+				if (pos == keyLen && pos == wordLen) {
 					p.f = freq;
 					return;
 				}
 
 				// if current node's word is a prefix of the word
 				if (pos >= keyLen) {
-					p.insert(word.substring(keyLen), freq);
+					p.insert(word.byteSubSequence(keyLen, wordLen), freq); //##
 					return;
 				}
 				
 				// current node's word and the word have the same prefix
-				PatriciaTrieNode newNode = new PatriciaTrieNode(p.w.subSequence(pos, keyLen), p.f, p.s);
-				p.w = word.subSequence(0, pos);
+				PatriciaTrieNode newNode = new PatriciaTrieNode(p.w.byteSubSequence(pos, keyLen), p.f, p.s);
+				p.w = word.byteSubSequence(0, pos);
 				p.f = freq;
 				p.s.clear();
 				p.s.add(newNode);
 
-				if (pos < word.length()) {
+				if (pos < wordLen) {
 					p.f = 0;
-					addSon(p.s, word.substring(pos), freq);
+					addSon(p.s, word.byteSubSequence(pos, wordLen), freq); //##
 				}
 				return;
 			}
@@ -152,9 +151,14 @@ public class PatriciaTrieNode implements Externalizable {
 		if (s == null || s.isEmpty())
 			return;
 		s.trimToSize();
-		for (PatriciaTrieNode son : s) {
-			son.recursiveTrim();
-		}
+		
+		if (s.isEmpty())
+			s = null;
+		else
+			for (PatriciaTrieNode son : s) {
+				son.recursiveTrim();
+			}
+		
 	}
 	
 	void print(String data)
@@ -171,7 +175,7 @@ public class PatriciaTrieNode implements Externalizable {
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 		s = (ArrayList<PatriciaTrieNode>)in.readObject();
-		w = (String)in.readObject();
+		w = (ByteCharSequence)in.readObject();
 		f = in.readInt();
 	}
 
@@ -180,5 +184,17 @@ public class PatriciaTrieNode implements Externalizable {
 		out.writeObject(s);
 		out.writeObject(w);
 		out.writeInt(f);
+		w = null;
+	}
+	
+	private void replaceByCachedSequence() {
+		PatriciaTrieNode node = PatriciaTrieSingleton.getInstance().map.get(w);
+		if (node != null) {
+			w = null;
+			w = node.w;
+		} else
+			PatriciaTrieSingleton.getInstance().map.put(w, this);
 	}
 }
+
+

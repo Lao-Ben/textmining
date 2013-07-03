@@ -51,7 +51,7 @@ public class MainApp {
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
 
-	        ExecutorService executor = Executors.newFixedThreadPool(2);
+	        ExecutorService executor = Executors.newFixedThreadPool(8);
 
 	        final List<Worker> workers = new ArrayList<Worker>();
 	        
@@ -101,6 +101,8 @@ public class MainApp {
 			}
 	//		System.out.println(res);
 			
+			System.out.println("Search time : "
+					+ (System.currentTimeMillis() - fin));
 			System.out.println("Global time : "
 					+ (System.currentTimeMillis() - debut));
 		} catch (FileNotFoundException e) {
