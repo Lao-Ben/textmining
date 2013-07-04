@@ -182,7 +182,12 @@ public class PatriciaTrieNode implements Externalizable {
 //		Object array = in.readObject();
 //		System.out.println(this.getClass().getName());
 //		s = new ArrayList<PatriciaTrieNode>(Arrays.asList((PatriciaTrieNode[])array));
-		w = (ByteCharSequence)in.readObject();
+		int len = in.readInt();
+		if (len > 0) {
+			byte[] bytes = new byte[len];
+			w = new ByteCharSequence(bytes, 0, len);
+		}
+//		w = (ByteCharSequence)in.readObject();
 		f = in.readInt();
 	}
 
@@ -193,7 +198,12 @@ public class PatriciaTrieNode implements Externalizable {
 			out.writeObject(son);
 		}
 //		out.writeObject(s.toArray());
-		out.writeObject(w);
+//		out.writeObject(w);
+		int len = (w == null) ? 0 : w.length();
+		out.writeInt(len);
+//		for (int i = 0; i < len; i++) {
+if (len > 0)			out.write(w.getBytes());
+//		}
 		out.writeInt(f);
 		w = null;
 	
