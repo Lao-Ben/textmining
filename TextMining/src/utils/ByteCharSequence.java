@@ -26,7 +26,12 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 		}
 	}
 	
-	ByteCharSequence(byte[] data, int offset, int end) {
+	public ByteCharSequence(byte[] data)
+	{
+		this.data = data;
+	}
+	
+	public ByteCharSequence(byte[] data, int offset, int end) {
 		this.data = new byte[end - offset];
 		System.arraycopy(data, offset, this.data, 0, end - offset);
 	}

@@ -4,11 +4,15 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.omg.CORBA.FREE_MEM;
+
 import utils.ByteCharSequence;
 
-public class PatriciaTrieNode implements Externalizable {
+public class PatriciaTrieNode implements Serializable {
 
 	protected ArrayList<PatriciaTrieNode> s;
 	protected ByteCharSequence w;
@@ -19,7 +23,7 @@ public class PatriciaTrieNode implements Externalizable {
 	 */
 	public PatriciaTrieNode() {
 		super();
-		s = new ArrayList<PatriciaTrieNode>();
+		s = null;
 		w = null;
 		f = 0;
 	}
@@ -31,7 +35,7 @@ public class PatriciaTrieNode implements Externalizable {
 	 */
 	public PatriciaTrieNode(ByteCharSequence word, int freq) {
 		super();
-		s = new ArrayList<PatriciaTrieNode>();
+		s = null;
 		w = word;
 		f = freq;
 		replaceByCachedSequence();
@@ -45,7 +49,13 @@ public class PatriciaTrieNode implements Externalizable {
 	 */
 	public PatriciaTrieNode(ByteCharSequence word, int freq, ArrayList<PatriciaTrieNode> sons) {
 		super();
-		s = new ArrayList<PatriciaTrieNode>(sons);
+		if (sons != null)
+		{
+			s = new ArrayList<PatriciaTrieNode>(sons);
+			s.trimToSize();
+		}
+		else
+			s = null;
 		w = word;
 		f = freq;
 		replaceByCachedSequence();
@@ -62,7 +72,9 @@ public class PatriciaTrieNode implements Externalizable {
 	 */
 	static void addSon(ArrayList<PatriciaTrieNode> nodes, ByteCharSequence word, int frequency) {
 		PatriciaTrieNode node = new PatriciaTrieNode(word, frequency);
+		PatriciaTrieSingleton.getInstance().count++;
 		nodes.add(node);
+		nodes.trimToSize();
 	}
 
 	/**
@@ -74,6 +86,8 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @return
 	 */
 	void insert(ByteCharSequence word, int freq) {
+		if (s != null)
+		{
 		for (PatriciaTrieNode p : s) {
 			// if trie not empty
 			// and word's first letter == current node first letter 
@@ -100,19 +114,28 @@ public class PatriciaTrieNode implements Externalizable {
 				}
 				
 				// current node's word and the word have the same prefix
+				if (p.s == null)
+					p.s = new ArrayList<PatriciaTrieNode>();
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.w.byteSubSequence(pos, keyLen), p.f, p.s);
+				PatriciaTrieSingleton.getInstance().count++;
 				p.w = word.byteSubSequence(0, pos);
 				p.f = freq;
 				p.s.clear();
 				p.s.add(newNode);
 
 				if (pos < wordLen) {
+					PatriciaTrieSingleton.getInstance().count--;
 					p.f = 0;
+					if (p.s == null)
+						p.s = new ArrayList<PatriciaTrieNode>();
 					addSon(p.s, word.byteSubSequence(pos, wordLen), freq); //##
 				}
 				return;
 			}
 		}
+		}
+		if (s == null)
+			s = new ArrayList<PatriciaTrieNode>();
 		addSon(s, word, freq);
 		return;
 	}
@@ -161,16 +184,27 @@ public class PatriciaTrieNode implements Externalizable {
 		
 	}
 	
-	void print(String data)
+	void print(int level)
 	{
-		System.out.print("{"+w+"("+s.size()+")"+" : ");
-		if (s.size() > 0)
-			for(PatriciaTrieNode n : s)
-				n.print(data);
-		System.out.print("}");
+		for (int i = 0; i < level; i++)
+			System.out.print("	");
+		if (s != null)
+			System.out.print("{"+w+"("+s.size()+")("+f+")"+" : ");
+		else
+			System.out.print("{"+w+"(0)("+f+")"+" : ");
+		if (s != null && s.size() > 0)
+		{
+			System.out.print("\n");
+			if (s != null)
+				for(PatriciaTrieNode n : s)
+					n.print(level + 1);
+			for (int i = 0; i < level; i++)
+				System.out.print("	");
+		}
+		System.out.println("}");
 	}
 
-	@Override
+	/*@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 		int size = in.read();
@@ -221,7 +255,7 @@ if (len > 0)			out.write(w.getBytes());
 				System.gc();
 			}
 		}
-	}
+	}*/
 	
 	private void replaceByCachedSequence() {
 		PatriciaTrieNode node = PatriciaTrieSingleton.getInstance().map.get(w);
@@ -230,6 +264,19 @@ if (len > 0)			out.write(w.getBytes());
 			w = node.w;
 		} else
 			PatriciaTrieSingleton.getInstance().map.put(w, this);
+	}
+	
+	public int countword()
+	{
+		int c = 0;
+		if (f > 0)
+			c++;
+		if (s != null && s.size() > 0)
+		{
+				for(PatriciaTrieNode n : s)
+					c = c + n.countword();
+		}
+		return c;
 	}
 }
 

@@ -1,2 +1,2 @@
 #/bin/sh
-java -jar -Xms512m -Xmx512m -XX:+UseG1GC build/compiler.jar $*
+java -jar -Xms512m -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseG1GC build/compiler.jar $*

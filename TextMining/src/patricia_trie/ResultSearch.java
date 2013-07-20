@@ -43,6 +43,7 @@ public class ResultSearch implements Comparable<ResultSearch> {
 		}
 		sb.append("]");
 		sb.trimToSize();
+		System.out.println(sb.toString());
 		return sb;
 	}
 

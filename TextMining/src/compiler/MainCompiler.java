@@ -51,10 +51,10 @@ public class MainCompiler {
 		            
 //		  System.out.println("Used Memory in JVM: " + (maxMemory - freeMemory) + "/" + maxMemory + " " + totalMemory);
 
-//		            long fin = System.currentTimeMillis();
-//					long time = fin-debut;
-//					System.out.println(i+" "+time);
-//					debut = System.currentTimeMillis();
+				    long fin = System.currentTimeMillis();
+			    long time = fin-debut;
+					System.out.println(i+" "+time);
+					debut = System.currentTimeMillis();
 				}
 			}
 			
@@ -64,10 +64,14 @@ public class MainCompiler {
 
 			debut = System.currentTimeMillis();
 			tree.trim();
+
+			System.out.println("count : " + tree.countword());
+			System.err.println("count trie : "+tree.count);
 			System.out.println("trimming time : " + (System.currentTimeMillis() - debut));
 
 
 			tree.map = null;
+			//tree.print();
 			
 			// force GC. Useless?
 			System.gc();

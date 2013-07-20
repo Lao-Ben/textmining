@@ -54,7 +54,7 @@ public class MainApp {
 			System.out.println("cpu threads :" + Runtime.getRuntime().availableProcessors());
 	        ExecutorService executor = Executors.newFixedThreadPool(120);
 
-	        final List<Worker> workers = new ArrayList<Worker>();
+	        //final List<Worker> workers = new ArrayList<Worker>();
 	        
 
 			while ((line = br.readLine()) != null) {
@@ -70,7 +70,8 @@ public class MainApp {
 				 * return tree.search(word, dist, tree.getData() .toString()); }
 				 * }); listfuture.add(future);
 				 */
-				workers.add(new Worker(word, dist, tree));
+				//workers.add(new Worker(word, dist, tree));
+				ResultSearch.exportJSon(tree.search(word, dist));
 			//	ResultSearch.exp final List<Worker> workersingle = new ArrayList<Worker>();ortJSon(tree.search(wo//rd, dist));
 
 				// results_synchr = Collections.synchronizedList(results);
@@ -85,7 +86,7 @@ public class MainApp {
 			 * e.printStackTrace(); } catch (ExecutionException e) { // TODO
 			 * Auto-generated catch block e.printStackTrace(); }
 			 */
-            try {
+            /*try {
 				executor.invokeAll(workers);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -100,7 +101,7 @@ public class MainApp {
 			for (Worker worker : workers) {
 				res.append(worker.res);
 			}
-	//		System.out.println(res);
+			System.out.println(res);*/
 			
 			System.out.println("Search time : "
 					+ (System.currentTimeMillis() - fin));

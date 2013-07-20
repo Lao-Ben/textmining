@@ -204,6 +204,8 @@ public class Minion {
 				collector.add(result);
 			}
 		}
+		
+		if (node.s != null)
 		for (PatriciaTrieNode n : node.s) {
 			root = n;
 			lengthkey = keyLen;
@@ -245,6 +247,7 @@ public class Minion {
 			}
 		}
 
+		if (node.s != null)
 		for (PatriciaTrieNode n : node.s) {
 			root = n;
 			lengthkey = keyLen;

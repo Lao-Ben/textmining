@@ -15,6 +15,7 @@ public class PatriciaTrie implements Externalizable {
 	
 	public transient HashMap<ByteCharSequence, PatriciaTrieNode> map;
 	public transient int gcStep = 0; 
+	public transient int count = 0;
 	/**
 	 * Constructeur
 	 */
@@ -68,6 +69,12 @@ public class PatriciaTrie implements Externalizable {
 	{
 		// TODO: implement print method
 		//root.print(getData().toString());
+		root.print(0);
+	}
+	
+	public int countword()
+	{
+		return root.countword();
 	}
 
 	@Override
