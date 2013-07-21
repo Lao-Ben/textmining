@@ -7,22 +7,23 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
+
 import utils.ByteCharSequence;
 
 public class PatriciaTrie implements Externalizable {
 
 	private PatriciaTrieNode root;
 	
-	public transient HashMap<ByteCharSequence, PatriciaTrieNode> map;
-	public transient int gcStep = 0; 
-	public transient int count = 0;
+	public transient TreeMap<ByteCharSequence, ByteCharSequence> map;
+	public transient int gcStep = 0;
 	/**
 	 * Constructeur
 	 */
 	public PatriciaTrie() {
 		super();
 		root = new PatriciaTrieNode();
-		map = new HashMap<ByteCharSequence, PatriciaTrieNode>();
+		map = new TreeMap<ByteCharSequence, ByteCharSequence>();
 	}
 	
 	/**

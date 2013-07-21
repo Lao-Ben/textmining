@@ -40,20 +40,22 @@ public class MainCompiler {
 			while ((line = br.readLine()) != null) {
 				int index = line.indexOf("\t");
 				ByteCharSequence word = new ByteCharSequence(line.substring(0, index));
+				if (!word.toString().equals(line.substring(0, index)))
+					System.err.println("Bad word : "+word);
 				int freq = Integer.valueOf(line.substring(index + 1));
 				tree.insert(word, freq);
 				i++;
-				if (i % 10000 == 0)
+				if (i % 100000 == 0)
 				{
 				//	long freeMemory = Runtime.getRuntime().freeMemory()/MegaBytes;
 		        //    long maxMemory = Runtime.getRuntime().maxMemory()/MegaBytes;
 		        //    long totalMemory = Runtime.getRuntime().totalMemory() / MegaBytes;
 		            
-//		  System.out.println("Used Memory in JVM: " + (maxMemory - freeMemory) + "/" + maxMemory + " " + totalMemory);
+//		  System.err.println("Used Memory in JVM: " + (maxMemory - freeMemory) + "/" + maxMemory + " " + totalMemory);
 
 				    long fin = System.currentTimeMillis();
 			    long time = fin-debut;
-					System.out.println(i+" "+time);
+					System.err.println(i+" "+time);
 					debut = System.currentTimeMillis();
 				}
 			}
@@ -65,9 +67,8 @@ public class MainCompiler {
 			debut = System.currentTimeMillis();
 			tree.trim();
 
-			System.out.println("count : " + tree.countword());
-			System.err.println("count trie : "+tree.count);
-			System.out.println("trimming time : " + (System.currentTimeMillis() - debut));
+			System.err.println("count : " + tree.countword());
+			System.err.println("trimming time : " + (System.currentTimeMillis() - debut));
 
 
 			tree.map = null;
@@ -89,7 +90,7 @@ public class MainCompiler {
 			gzipOut.close();
 			file.close();
 
-			System.out.println("Serialization time : " + (System.currentTimeMillis() - debut));
+			System.err.println("Serialization time : " + (System.currentTimeMillis() - debut));
 			
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
@@ -98,6 +99,6 @@ public class MainCompiler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Global time : " + (System.currentTimeMillis() - start));
+		System.err.println("Global time : " + (System.currentTimeMillis() - start));
 	}
 }

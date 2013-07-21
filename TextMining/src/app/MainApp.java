@@ -37,12 +37,12 @@ public class MainApp {
 			BufferedInputStream bfin = new BufferedInputStream(gzipIn);
 			ObjectInputStream ois = new ObjectInputStream(bfin);
 
-			System.out.println("Deserializing...");
+			System.err.println("Deserializing...");
 			long debut = System.currentTimeMillis();
 			final PatriciaTrie tree = (PatriciaTrie) ois.readObject();
 			long fin = System.currentTimeMillis();
 			long time = fin - debut;
-			System.out.println("Deserialization time : " + time);
+			System.err.println("Deserialization time : " + time);
 			ois.close();
 			bfin.close();
 			gzipIn.close();
@@ -51,7 +51,7 @@ public class MainApp {
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
 
-			System.out.println("cpu threads :" + Runtime.getRuntime().availableProcessors());
+			System.err.println("cpu threads :" + Runtime.getRuntime().availableProcessors());
 	        ExecutorService executor = Executors.newFixedThreadPool(120);
 
 	        //final List<Worker> workers = new ArrayList<Worker>();
@@ -101,11 +101,11 @@ public class MainApp {
 			for (Worker worker : workers) {
 				res.append(worker.res);
 			}
-			System.out.println(res);*/
+			System.err.println(res);*/
 			
-			System.out.println("Search time : "
+			System.err.println("Search time : "
 					+ (System.currentTimeMillis() - fin));
-			System.out.println("Global time : "
+			System.err.println("Global time : "
 					+ (System.currentTimeMillis() - debut));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

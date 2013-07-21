@@ -72,7 +72,6 @@ public class PatriciaTrieNode implements Serializable {
 	 */
 	static void addSon(ArrayList<PatriciaTrieNode> nodes, ByteCharSequence word, int frequency) {
 		PatriciaTrieNode node = new PatriciaTrieNode(word, frequency);
-		PatriciaTrieSingleton.getInstance().count++;
 		nodes.add(node);
 		nodes.trimToSize();
 	}
@@ -109,6 +108,8 @@ public class PatriciaTrieNode implements Serializable {
 
 				// if current node's word is a prefix of the word
 				if (pos >= keyLen) {
+					if (p.s == null)
+						p.s = new ArrayList<PatriciaTrieNode>();
 					p.insert(word.byteSubSequence(keyLen, wordLen), freq); //##
 					return;
 				}
@@ -117,14 +118,12 @@ public class PatriciaTrieNode implements Serializable {
 				if (p.s == null)
 					p.s = new ArrayList<PatriciaTrieNode>();
 				PatriciaTrieNode newNode = new PatriciaTrieNode(p.w.byteSubSequence(pos, keyLen), p.f, p.s);
-				PatriciaTrieSingleton.getInstance().count++;
 				p.w = word.byteSubSequence(0, pos);
 				p.f = freq;
 				p.s.clear();
 				p.s.add(newNode);
 
 				if (pos < wordLen) {
-					PatriciaTrieSingleton.getInstance().count--;
 					p.f = 0;
 					if (p.s == null)
 						p.s = new ArrayList<PatriciaTrieNode>();
@@ -258,12 +257,12 @@ if (len > 0)			out.write(w.getBytes());
 	}*/
 	
 	private void replaceByCachedSequence() {
-		PatriciaTrieNode node = PatriciaTrieSingleton.getInstance().map.get(w);
+		ByteCharSequence node = PatriciaTrieSingleton.getInstance().map.get(w);
 		if (node != null) {
 			w = null;
-			w = node.w;
+			w = node;
 		} else
-			PatriciaTrieSingleton.getInstance().map.put(w, this);
+			PatriciaTrieSingleton.getInstance().map.put(w, w);
 	}
 	
 	public int countword()
