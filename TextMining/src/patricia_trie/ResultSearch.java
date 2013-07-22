@@ -65,18 +65,7 @@ public class ResultSearch implements Comparable<ResultSearch> {
 	}
 	
 	public static int sbcmp(StringBuilder sb1, StringBuilder sb2) {
-		if (sb1.length() < sb2.length())
-			return -1;
-		else if (sb1.length() < sb2.length())
-			return 1;
-		else
-			for (int i = 0; i < sb1.length(); i++) {
-				if (sb1.charAt(i) < sb2.charAt(i))
-					return -1;
-				else if (sb1.charAt(i) > sb2.charAt(i))
-					return 1;
-			}
-		return 0;
+		return sb1.toString().compareTo(sb2.toString());
 	}
 
 }

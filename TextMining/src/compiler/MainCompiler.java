@@ -40,8 +40,6 @@ public class MainCompiler {
 			while ((line = br.readLine()) != null) {
 				int index = line.indexOf("\t");
 				ByteCharSequence word = new ByteCharSequence(line.substring(0, index));
-				if (!word.toString().equals(line.substring(0, index)))
-					System.err.println("Bad word : "+word);
 				int freq = Integer.valueOf(line.substring(index + 1));
 				tree.insert(word, freq);
 				i++;
@@ -71,6 +69,7 @@ public class MainCompiler {
 			System.err.println("trimming time : " + (System.currentTimeMillis() - debut));
 
 
+			tree.map.clear();
 			tree.map = null;
 			//tree.print();
 			
