@@ -43,6 +43,10 @@ public class Minion {
 		root = null;
 	}
 
+	/**
+	 * Show the table
+	 * @param keyLen
+	 */
 	void tableDisplay(char keyLen) {
 		char i;
 		char j;
@@ -92,7 +96,17 @@ public class Minion {
 		System.out.println();
 	}
 
-	void configure(PatriciaTrieNode root, StringBuilder word, int minDistance, int realDistance, int maxDistance, int lengthkey, List<ResultSearch> collectors) {
+	/**
+	 * Configure the minion
+	 * @param root the root node
+	 * @param word the word
+	 * @param minDistance the minimal distance
+	 * @param realDistance the real distance
+	 * @param maxDistance the maximal distance
+	 * @param lengthkey the length key
+ 	 * @param collectors the list of ResultSearch
+	 */
+	public void configure(PatriciaTrieNode root, StringBuilder word, int minDistance, int realDistance, int maxDistance, int lengthkey, List<ResultSearch> collectors) {
 		// log("being configured...");
 		this.root = root;
 		this.word = word;
@@ -131,8 +145,12 @@ public class Minion {
 		}
 	}
 
+	/**
+	 * Calculate the distance between the key and the word
+	 * @param oldKeyLen
+	 * @param keyLen
+	 */
 	void calculateDistance(int oldKeyLen, int keyLen) {
-		// Partial Damerau-Levenshtein distance
 		int iStart;
 		if (oldKeyLen < maxDistance + 1)
 			iStart = 1;
@@ -170,21 +188,11 @@ public class Minion {
 			realDistance = cmpTable[wordLen][keyLen];
 	}
 	
-	int strncmp(String s1, String s2, int length)
-	{
-		return s1.substring(0, length).compareTo(s2.substring(0, length));
-	}
-	
-	String copy(String s2, int length)
-	{
-		char[] d = new char[length];
-		for (int i = 0; i < length; i++)
-		{
-			d[i] = s2.charAt(i);
-		}
-		return String.valueOf(d);
-	}
-	
+	/**
+	 * Search for a distance of zero
+	 * @param node the node where we search
+	 * @param keyLen the key length
+	 */
 	void browseNode0(PatriciaTrieNode node, int keyLen) {
 		int nodeStrLength = node.w.length();
 		if (keyLen + nodeStrLength > wordLen)
@@ -214,6 +222,11 @@ public class Minion {
 		}
 	}
 
+	/**
+	 * Search for a distance different of zero
+	 * @param node the node where we search
+	 * @param keyLen the key length
+	 */
 	void browseNode(PatriciaTrieNode node, int keyLen) {
 		if (keyLen + node.w.length() > wordLen + maxDistance) {
 			return; // No chance to do better
@@ -257,6 +270,9 @@ public class Minion {
 		return;
 	}
 
+	/**
+	 * General function of search
+	 */
 	public void browse() {
 		if (maxDistance == 0) {
 			browseNode0(root, lengthkey);

@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,18 @@ public class PatriciaTrie implements Externalizable {
 	}
 	
 	/**
+	 * Create a new PatriciaTrie with a node
+	 * @param r the node
+	 */
+	public PatriciaTrie(PatriciaTrieNode r)
+	{
+		super();
+		root = r;
+		map = null;
+		gcStep = 0;
+	}
+	
+	/**
 	 * Insert le mot avec sa frequence dans le patricia trie
 	 * @param word le mot a inserer
 	 * @param frequency la frequence du mot
@@ -37,8 +50,8 @@ public class PatriciaTrie implements Externalizable {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Return the root node
+	 * @return the root node
 	 */
 	public PatriciaTrieNode getRoot() {
 		return root;
@@ -48,8 +61,6 @@ public class PatriciaTrie implements Externalizable {
 	 * Recherche le mot specifier dans le patricia trie
 	 * @param word le mot a rechercher
 	 * @param maxDistance la distance max de recherche
-	 * @param treeData les donnees du patricia trie
-	 * @param collector la liste des resultats de la recherche
 	 */
 	public List<ResultSearch> search(StringBuilder word, int maxDistance) {
 		List<ResultSearch> results = new ArrayList<ResultSearch>();
@@ -65,7 +76,9 @@ public class PatriciaTrie implements Externalizable {
 		root.recursiveTrim();
 	}
 
-	
+	/**
+	 * Print the PatriciaTrie
+	 */
 	public void print()
 	{
 		// TODO: implement print method
@@ -73,6 +86,10 @@ public class PatriciaTrie implements Externalizable {
 		root.print(0);
 	}
 	
+	/**
+	 * Count the number of word in PatriciaTrie
+	 * @return the number of word
+	 */
 	public int countword()
 	{
 		return root.countword();
@@ -88,5 +105,16 @@ public class PatriciaTrie implements Externalizable {
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeObject(root);
 	}
+	
+	/*public void write(ByteBuffer byteBuffer)
+	{
+		root.write(byteBuffer);
+	}
+	
+	public PatriciaTrie read(ByteBuffer byteBuffer)
+	{
+		return new PatriciaTrie(PatriciaTrieNode.read(byteBuffer));
+	}*/
+	
 }
 

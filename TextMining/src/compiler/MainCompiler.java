@@ -1,6 +1,7 @@
 package compiler;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.zip.GZIPOutputStream;
 
 import patricia_trie.PatriciaTrie;
@@ -74,7 +75,9 @@ public class MainCompiler {
 			//tree.print();
 			
 			// force GC. Useless?
-			System.gc();
+			System.err.println("Before GC");
+			//System.gc();
+			System.err.println("After GC");
 			
 			debut = System.currentTimeMillis();
 
@@ -82,7 +85,14 @@ public class MainCompiler {
 			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
 			BufferedOutputStream bfout = new BufferedOutputStream(gzipOut);
 			ObjectOutputStream oos = new ObjectOutputStream(bfout);
+			System.err.println("Before Write");
+			/*ByteBuffer buff = ByteBuffer.allocateDirect(1024);
+			tree.write(buff);
+			byte[] tab = new byte[buff.capacity()-buff.remaining()];
+			buff.get(tab);
+			oos.writeObject(tab);*/
 			oos.writeObject(tree);
+			System.err.println("After Write");
 			oos.flush();
 			oos.close();
 			bfout.close();

@@ -16,7 +16,7 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 	static final long serialVersionUID = 1L;
 
 	private static final String ENCODING = "ISO-8859-1";
-	private final byte[] data;
+	private byte[] data;
 
 	public ByteCharSequence(String str) {
 		try {
@@ -103,5 +103,49 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 			if (cmp2 != 0) return cmp2;
 		}
 		return 0;
+	}
+	
+	public int indexOf(ByteCharSequence seq)
+	{
+		for (int i = 0; i < (data.length-seq.length());i++)
+		{
+			int j = 0;
+			for (j=0; j < seq.length(); j++)
+			{
+				if (charAt(i+j) != seq.charAt(j))
+					break;
+			}
+			if (j == seq.length())
+				return i;
+		}
+		return -1;
+	}
+	
+	public ByteCharSequence get(ByteCharSequence seq)
+	{
+		for (int i = 0; i < (data.length-seq.length());i++)
+		{
+			int j = 0;
+			byte[] tab = new byte[seq.length()];
+			for (j=0; j < seq.length(); j++)
+			{
+				if (charAt(i+j) != seq.charAt(j))
+					break;
+				else
+					tab[j] = seq.data[j];
+			}
+			if (j == seq.length())
+				return new ByteCharSequence(tab);
+		}
+		return null;
+	}
+	
+	public void append(ByteCharSequence seq)
+	{
+		byte[] tab = new byte[seq.length()+data.length];
+		System.arraycopy(data, 0, tab, 0, data.length);
+		System.arraycopy(seq.data, 0, tab, data.length, seq.length());
+		data = null;
+		data = tab;
 	}
 }

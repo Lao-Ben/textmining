@@ -8,6 +8,12 @@ public class ResultSearch implements Comparable<ResultSearch> {
 	int distance;
 	int frequence;
 
+	/**
+	 * Create a new ResultSearch with word, distance and frequency
+	 * @param word the word
+	 * @param distance the distance
+	 * @param frequence the frequency
+	 */
 	public ResultSearch(StringBuilder word, int distance, int frequence) {
 		super();
 		this.word = word;
@@ -27,6 +33,11 @@ public class ResultSearch implements Comparable<ResultSearch> {
 		return frequence;
 	}
 
+	/**
+	 * Print the list of ResultSearch
+	 * @param resultCollector the list of ResultSearch
+	 * @return the StringBuilder with the print of the list
+	 */
 	public static StringBuilder exportJSon(List<ResultSearch> resultCollector) {
 		Collections.sort(resultCollector);
 		int size = resultCollector.size();
