@@ -106,15 +106,15 @@ public class PatriciaTrie implements Externalizable {
 		out.writeObject(root);
 	}
 	
-	/*public void write(ByteBuffer byteBuffer)
+	public void write(ByteBuffer byteBuffer)
 	{
 		root.write(byteBuffer);
 	}
 	
-	public PatriciaTrie read(ByteBuffer byteBuffer)
+	public static PatriciaTrie read(ByteBuffer byteBuffer)
 	{
 		return new PatriciaTrie(PatriciaTrieNode.read(byteBuffer));
-	}*/
+	}
 	
 }
 

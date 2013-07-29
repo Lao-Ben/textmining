@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class PatriciaTrieNode implements Externalizable {
 	 * @param sons the list of sons
 	 */
 	public PatriciaTrieNode(ByteCharSequence word, int frequency,
-			ArrayList<PatriciaTrieNode> sons) {
+			ArrayList<PatriciaTrieNode> sons, boolean replace) {
 		super();
 		if (sons != null) {
 			s = new ArrayList<PatriciaTrieNode>(sons);
@@ -64,7 +65,8 @@ public class PatriciaTrieNode implements Externalizable {
 			s = null;
 		w = word;
 		f = frequency;
-		replaceByCachedSequence();
+		if (replace)
+			replaceByCachedSequence();
 	}
 
 	/**
@@ -118,7 +120,7 @@ public class PatriciaTrieNode implements Externalizable {
 					if (p.s == null)
 						p.s = new ArrayList<PatriciaTrieNode>();
 					PatriciaTrieNode newNode = new PatriciaTrieNode(
-							p.w.byteSubSequence(pos, keyLen), p.f, p.s);
+							p.w.byteSubSequence(pos, keyLen), p.f, p.s, true);
 					p.w = word.byteSubSequence(0, pos);
 					p.f = freq;
 					p.s.clear();
@@ -216,9 +218,13 @@ public class PatriciaTrieNode implements Externalizable {
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 		int size = in.readInt();
-		s = new ArrayList<PatriciaTrieNode>();
-		for (int i = 0; i < size; i++) {
-			s.add((PatriciaTrieNode) in.readObject());
+		s = null;
+		if (size > 0)
+		{
+			s = new ArrayList<PatriciaTrieNode>();
+			for (int i = 0; i < size; i++) {
+				s.add((PatriciaTrieNode) in.readObject());
+			}
 		}
 		// s = (ArrayList<PatriciaTrieNode>)in.readObject();
 		// Object array = in.readObject();
@@ -257,6 +263,7 @@ public class PatriciaTrieNode implements Externalizable {
 		// }
 		out.writeInt(f);
 		w = null;
+		out.flush();
 	}
 
 	private void replaceByCachedSequence() {
@@ -365,16 +372,8 @@ public class PatriciaTrieNode implements Externalizable {
 		}
 	}*/
 	
-	/*public void write(ByteBuffer byteBuffer)
+	public void write(ByteBuffer byteBuffer)
 	{
-		if (byteBuffer.remaining() < 1024)
-		{
-			ByteBuffer buff = ByteBuffer.allocateDirect(byteBuffer.capacity()+1024);
-			int pos = byteBuffer.position();
-			buff.put(byteBuffer);
-			buff.position(pos);
-			byteBuffer = buff;
-		}
 		if (s != null)
 		{
 			byteBuffer.putInt(s.size());
@@ -389,7 +388,9 @@ public class PatriciaTrieNode implements Externalizable {
 		byteBuffer.putInt(len);
 		// for (int i = 0; i < len; i++) {
 		if (len > 0)
+		{
 			byteBuffer.put(w.getBytes(),0,len);
+		}
 		// }
 		byteBuffer.putInt(f);
 		w = null;
@@ -416,6 +417,6 @@ public class PatriciaTrieNode implements Externalizable {
 			word = new ByteCharSequence(bytes);
 		}
 		int freq = buff.getInt();
-		return new PatriciaTrieNode(word, freq, sons);		
-	}*/
+		return new PatriciaTrieNode(word, freq, sons, false);		
+	}
 }

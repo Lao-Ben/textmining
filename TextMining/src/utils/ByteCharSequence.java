@@ -87,8 +87,9 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 	@Override
 	public int hashCode() {
 		int h = 0;
-		for (int i = 0; i < data.length; i++) {
-			h = 31*h + charAt(i);
+		int n = data.length;
+		for (int i = 0; i < n; i++) {
+			h = (int) (h + charAt(i)* Math.pow(31, n-1-i));
 		}
 		return h;
 	}

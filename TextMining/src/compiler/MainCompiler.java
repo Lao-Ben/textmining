@@ -2,6 +2,7 @@ package compiler;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.zip.GZIPOutputStream;
 
 import patricia_trie.PatriciaTrie;
@@ -82,21 +83,22 @@ public class MainCompiler {
 			debut = System.currentTimeMillis();
 
 			FileOutputStream file = new FileOutputStream(args[1]);
-			GZIPOutputStream gzipOut = new GZIPOutputStream(file);
+			/*GZIPOutputStream gzipOut = new GZIPOutputStream(file);
 			BufferedOutputStream bfout = new BufferedOutputStream(gzipOut);
-			ObjectOutputStream oos = new ObjectOutputStream(bfout);
+			ObjectOutputStream oos = new ObjectOutputStream(bfout);*/
 			System.err.println("Before Write");
-			/*ByteBuffer buff = ByteBuffer.allocateDirect(1024);
+			FileChannel chan = file.getChannel();
+			ByteBuffer buff = ByteBuffer.allocate(50000000);
 			tree.write(buff);
-			byte[] tab = new byte[buff.capacity()-buff.remaining()];
-			buff.get(tab);
-			oos.writeObject(tab);*/
-			oos.writeObject(tree);
+			buff.flip();
+			System.out.println(chan.write(buff));
+			chan.close();
+			//oos.writeObject(tree);
 			System.err.println("After Write");
-			oos.flush();
+			/*oos.flush();
 			oos.close();
 			bfout.close();
-			gzipOut.close();
+			gzipOut.close();*/
 			file.close();
 
 			System.err.println("Serialization time : " + (System.currentTimeMillis() - debut));

@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,19 +35,23 @@ public class MainApp {
 		FileInputStream fich;
 		try {
 			fich = new FileInputStream(args[0]);
-			GZIPInputStream gzipIn = new GZIPInputStream(fich);
+			/*GZIPInputStream gzipIn = new GZIPInputStream(fich);
 			BufferedInputStream bfin = new BufferedInputStream(gzipIn);
-			ObjectInputStream ois = new ObjectInputStream(bfin);
+			ObjectInputStream ois = new ObjectInputStream(bfin);*/
 
 			System.err.println("Deserializing...");
 			long debut = System.currentTimeMillis();
-			final PatriciaTrie tree = (PatriciaTrie) ois.readObject();
+			FileChannel chan = fich.getChannel();
+			ByteBuffer buff = ByteBuffer.allocate((int) chan.size());
+			chan.read(buff);
+			buff.flip();
+			final PatriciaTrie tree = PatriciaTrie.read(buff);
 			long fin = System.currentTimeMillis();
 			long time = fin - debut;
 			System.err.println("Deserialization time : " + time);
-			ois.close();
+			/*ois.close();
 			bfin.close();
-			gzipIn.close();
+			gzipIn.close();*/
 			fich.close();
 			InputStreamReader ipsr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(ipsr);
@@ -111,9 +117,6 @@ public class MainApp {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
