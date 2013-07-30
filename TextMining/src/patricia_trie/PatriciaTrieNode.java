@@ -378,9 +378,7 @@ public class PatriciaTrieNode implements Externalizable {
 		{
 			byteBuffer.putInt(s.size());
 			for(PatriciaTrieNode son : s)
-			{
 				son.write(byteBuffer);
-			}
 		}
 		else
 			byteBuffer.putInt(0);
@@ -389,7 +387,7 @@ public class PatriciaTrieNode implements Externalizable {
 		// for (int i = 0; i < len; i++) {
 		if (len > 0)
 		{
-			byteBuffer.put(w.getBytes(),0,len);
+			byteBuffer.put(w.getBytes());
 		}
 		// }
 		byteBuffer.putInt(f);
@@ -404,19 +402,19 @@ public class PatriciaTrieNode implements Externalizable {
 		{
 			sons = new ArrayList<PatriciaTrieNode>();
 			for (int i = 0; i < size; i++)
-			{
 				sons.add(read(buff));
-			}
 		}
 		int length = buff.getInt();
 		ByteCharSequence word = null;
 		if (length > 0)
 		{
 			byte[] bytes = new byte[length];
-			buff.get(bytes,0,length);
+			buff.get(bytes);
 			word = new ByteCharSequence(bytes);
 		}
 		int freq = buff.getInt();
-		return new PatriciaTrieNode(word, freq, sons, false);		
+		/*if (word != null)
+			return new PatriciaTrieNode(word, freq, sons, true);*/
+		return new PatriciaTrieNode(word, freq, sons, false);
 	}
 }

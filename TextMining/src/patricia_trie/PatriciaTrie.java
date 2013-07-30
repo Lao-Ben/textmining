@@ -6,7 +6,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -113,7 +112,10 @@ public class PatriciaTrie implements Externalizable {
 	
 	public static PatriciaTrie read(ByteBuffer byteBuffer)
 	{
-		return new PatriciaTrie(PatriciaTrieNode.read(byteBuffer));
+		PatriciaTrie trie = PatriciaTrieSingleton.getInstance();
+		PatriciaTrieNode root = PatriciaTrieNode.read(byteBuffer);
+		trie.root = root;
+		return trie;
 	}
 	
 }

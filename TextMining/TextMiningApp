@@ -1,2 +1,2 @@
 #/bin/sh
-java -jar build/app.jar $1
+java -jar -Xms512m -Xmx512m -XX:+UseG1GC build/app.jar $1

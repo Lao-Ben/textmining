@@ -1,21 +1,18 @@
 package app;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.zip.GZIPInputStream;
 
 import patricia_trie.PatriciaTrie;
 import patricia_trie.ResultSearch;
@@ -42,7 +39,7 @@ public class MainApp {
 			System.err.println("Deserializing...");
 			long debut = System.currentTimeMillis();
 			FileChannel chan = fich.getChannel();
-			ByteBuffer buff = ByteBuffer.allocate((int) chan.size());
+			ByteBuffer buff = ByteBuffer.allocateDirect((int) chan.size()).order(ByteOrder.nativeOrder());
 			chan.read(buff);
 			buff.flip();
 			final PatriciaTrie tree = PatriciaTrie.read(buff);

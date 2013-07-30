@@ -1,0 +1,27 @@
+Explication du programme
+
+Nous avons décidé de réaliser notre projet puisqu'il existait déjà un mécanisme de sérilisation et que nous nous sommes dit que nous n'aurions pas à en implémenter un nous même. Pour compiler notre projet, il suffit de lancer un ant. Une fois cela fait, il vous suffit de lancer les différents programmes conformément à ce qui est demandé dans le sujet.
+Pour générer la doc, il suffit de faire ant doc et ensuite la doc est dans le répertoire doc à la racine du projet.
+
+Questions
+
+1. Decrivez les choix de design de votre programme
+Nous avons choisit de faire deux fonctions main afin de générer nos deux programmes différents. Pour ce qui est de la création ainsi que la gestion de notre dictionnaire, nous avons décidé de faire deux classes principales différentes que sont les classes PatriciaTrie et PatriciaTrieNode. Ainsi, notre PatriciaTrie possède un noeud racine et c'est à partir de ce noeud que l'on insert tout les mots de notre liste de départ. Nous avons également mis une map dans ce PatriciaTrie de manière à diminuer la cosommation mémoire. Ensuite, nous avons implémenté notre propre mécanisme de stockage de notre PatriciaTrie de manière à utiliser le moins de temps possible tout comme le moins de mémoire possible.
+
+2. Listez l’ensemble des tests effectués sur votre programme (en plus des units tests)
+Nous avons fait des tests de diff entre le programme référence et le nôtre de manière à pouvoir savoir si les deux sorties étaient les mêmes mais également pour pouvoir comparer les temps de traitements notamment pour savoir si oui ou non, on avait le bon ordre dans les résultats de la recherche que nous renvoyons.
+
+3. Avez-vous détecté des cas où la correction par distance ne fonctionnait pas (même avec une distance  élevée) ?
+Les seuls cas que nous avons vu et où cela arrivait étaient ceux où l'on utilisait des caractères accentués pour notre mot puisque nous ne prenons pas ce type de caractère en compte.
+
+4. Quelle est la structure de données que vous avez implémentée dans votre projet, pourquoi ?
+Nous avons utilisé un patricia trie puisque grâce à cette structure, l'utilisation mémoire est réduite et on a de meilleurs performances lors de la recherche.
+
+5. Proposez un réglage automatique de la distance pour un programme qui prend juste une chaîne de caractères en entrée, donner le processus d’évaluation ainsi que les résultats
+On peut regarder la taille de notre mot et déterminer la distance à partir de celle-ci. En effet, dans la pluspart des cas, les gens se trompent sur certaines lettres du mots et pas sur le mot entier. Donc, si on fait une recherche avec une distance maximale égale à la taille du mot, on aura le plus de chance de trouver le mot correspondant.
+
+6. Comment comptez vous améliorer les performances de votre programme
+On peut améliorer les performances de notre programme en améliorant les temps d'accès aux données puisque ces temps d'accès dégradent nos performances et sont à la base de nos deux programmes. Une autre amélioration serait de pouvoir diminuer les temps de sérialisation et de désérialisation qui sont les temps diminuant le plus nos performances notamment au moment de la recherche.
+
+7. Que manque-t-il à votre correcteur orthographique pour qu’il soit à l’état de l’art ?
+Il lui manque le fait de pouvoir gérer un alphabet plus grand ainsi que la possibilité de pouvoir corriger une phrase en entier et non plus seulement corriger des mots. Une autre amélioration pourrait être de prendre en compte le sens de la phrase de manière à ne plus seulement utiliser une distance et ainsi obtenir une meilleure correction.
