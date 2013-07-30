@@ -102,7 +102,7 @@ public class MainApp {
 			StringBuilder res = new StringBuilder();
 			
 			for (Worker worker : workers) {
-				res.append(worker.res);
+				System.out.println(worker.res);
 			}
 			//System.out.println(res);
 			
