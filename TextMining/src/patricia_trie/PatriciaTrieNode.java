@@ -4,13 +4,17 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import utils.ByteCharSequence;
 
-public class PatriciaTrieNode implements Externalizable {
+public class PatriciaTrieNode implements Serializable {
 
 	/**
 	 * The list of sons
@@ -214,7 +218,7 @@ public class PatriciaTrieNode implements Externalizable {
 		System.out.println("}");
 	}
 
-	@Override
+	/*@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 		int size = in.readInt();
@@ -264,7 +268,7 @@ public class PatriciaTrieNode implements Externalizable {
 		out.writeInt(f);
 		w = null;
 		out.flush();
-	}
+	}*/
 
 	private void replaceByCachedSequence() {
 		ByteCharSequence node = PatriciaTrieSingleton.getInstance().map.get(w);
@@ -384,37 +388,34 @@ public class PatriciaTrieNode implements Externalizable {
 			byteBuffer.putInt(0);
 		int len = (w == null) ? 0 : w.length();
 		byteBuffer.putInt(len);
-		// for (int i = 0; i < len; i++) {
 		if (len > 0)
-		{
 			byteBuffer.put(w.getBytes());
-		}
-		// }
 		byteBuffer.putInt(f);
 		w = null;
 	}
 	
 	public static PatriciaTrieNode read(ByteBuffer buff)
 	{
+		PatriciaTrieNode node = new PatriciaTrieNode();
 		int size = buff.getInt();
 		ArrayList<PatriciaTrieNode> sons = null;
 		if (size > 0)
 		{
-			sons = new ArrayList<PatriciaTrieNode>();
+			node.s = new ArrayList<PatriciaTrieNode>(size);
 			for (int i = 0; i < size; i++)
-				sons.add(read(buff));
+				node.s.add(read(buff));
 		}
 		int length = buff.getInt();
-		ByteCharSequence word = null;
 		if (length > 0)
 		{
 			byte[] bytes = new byte[length];
 			buff.get(bytes);
-			word = new ByteCharSequence(bytes);
+			node.w = new ByteCharSequence(bytes);
 		}
-		int freq = buff.getInt();
+		node.f = buff.getInt();
 		/*if (word != null)
 			return new PatriciaTrieNode(word, freq, sons, true);*/
-		return new PatriciaTrieNode(word, freq, sons, false);
+		//return new PatriciaTrieNode(word, freq, sons, false);
+		return node;
 	}
 }

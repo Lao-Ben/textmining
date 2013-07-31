@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 import patricia_trie.PatriciaTrie;
 import patricia_trie.ResultSearch;
 
+
 public class MainApp {
 
 	/**
@@ -32,33 +33,36 @@ public class MainApp {
 		FileInputStream fich;
 		try {
 			fich = new FileInputStream(args[0]);
-			/*GZIPInputStream gzipIn = new GZIPInputStream(fich);
-			BufferedInputStream bfin = new BufferedInputStream(gzipIn);
-			ObjectInputStream ois = new ObjectInputStream(bfin);*/
+			/*
+			 * GZIPInputStream gzipIn = new GZIPInputStream(fich);
+			 * BufferedInputStream bfin = new BufferedInputStream(gzipIn);
+			 * ObjectInputStream ois = new ObjectInputStream(bfin);
+			 */
 
-			System.err.println("Deserializing...");
+			//System.err.println("Deserializing...");
 			long debut = System.currentTimeMillis();
 			FileChannel chan = fich.getChannel();
-			ByteBuffer buff = ByteBuffer.allocateDirect((int) chan.size()).order(ByteOrder.nativeOrder());
+			ByteBuffer buff = ByteBuffer.allocateDirect((int) chan.size())
+					.order(ByteOrder.nativeOrder());
 			chan.read(buff);
 			buff.flip();
 			final PatriciaTrie tree = PatriciaTrie.read(buff);
 			long fin = System.currentTimeMillis();
 			long time = fin - debut;
-			System.err.println("Deserialization time : " + time);
-			/*ois.close();
-			bfin.close();
-			gzipIn.close();*/
+			//System.err.println("Deserialization time : " + time);
+			/*
+			 * ois.close(); bfin.close(); gzipIn.close();
+			 */
 			fich.close();
 			InputStreamReader ipsr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
 
-			System.err.println("cpu threads :" + Runtime.getRuntime().availableProcessors());
-	        ExecutorService executor = Executors.newFixedThreadPool(120);
+			/*System.err.println("cpu threads :"
+					+ Runtime.getRuntime().availableProcessors());*/
+			ExecutorService executor = Executors.newFixedThreadPool(120);
 
-	        final List<Worker> workers = new ArrayList<Worker>();
-	        
+			final List<Worker> workers = new ArrayList<Worker>();
 
 			while ((line = br.readLine()) != null) {
 				String[] tab = line.split(" ");
@@ -74,8 +78,9 @@ public class MainApp {
 				 * }); listfuture.add(future);
 				 */
 				workers.add(new Worker(word, dist, tree));
-				//ResultSearch.exportJSon(tree.search(word, dist));
-			//	ResultSearch.exp final List<Worker> workersingle = new ArrayList<Worker>();ortJSon(tree.search(wo//rd, dist));
+				// ResultSearch.exportJSon(tree.search(word, dist));
+				// ResultSearch.exp final List<Worker> workersingle = new
+				// ArrayList<Worker>();ortJSon(tree.search(wo//rd, dist));
 
 				// results_synchr = Collections.synchronizedList(results);
 			}
@@ -89,7 +94,7 @@ public class MainApp {
 			 * e.printStackTrace(); } catch (ExecutionException e) { // TODO
 			 * Auto-generated catch block e.printStackTrace(); }
 			 */
-            try {
+			try {
 				executor.invokeAll(workers);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -97,19 +102,20 @@ public class MainApp {
 			}
 
 			executor.shutdown();
-			while (!executor.isTerminated()) {}
+			while (!executor.isTerminated()) {
+			}
 
-			StringBuilder res = new StringBuilder();
-			
+			//StringBuilder res = new StringBuilder();
+
 			for (Worker worker : workers) {
 				System.out.println(worker.res);
 			}
-			//System.out.println(res);
-			
-			System.err.println("Search time : "
+			// System.out.println(res);
+
+			/*System.err.println("Search time : "
 					+ (System.currentTimeMillis() - fin));
 			System.err.println("Global time : "
-					+ (System.currentTimeMillis() - debut));
+					+ (System.currentTimeMillis() - debut));*/
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -122,20 +128,20 @@ public class MainApp {
 
 class Worker implements Callable<Void> {
 
-    private StringBuilder word;
-    private int dist;
-    private PatriciaTrie tree;
-    public StringBuilder res;
-    
-    public Worker(StringBuilder w, int d, PatriciaTrie t) {
-        word = w;
-        dist = d;
-        tree = t;
-    }
+	private StringBuilder word;
+	private int dist;
+	private PatriciaTrie tree;
+	public StringBuilder res;
 
-    @Override
-    public Void call() {
-    	res = ResultSearch.exportJSon(tree.search(word, dist));
-    	return null;
-    }
+	public Worker(StringBuilder w, int d, PatriciaTrie t) {
+		word = w;
+		dist = d;
+		tree = t;
+	}
+
+	@Override
+	public Void call() {
+		res = ResultSearch.exportJSon(tree.search(word, dist));
+		return null;
+	}
 }

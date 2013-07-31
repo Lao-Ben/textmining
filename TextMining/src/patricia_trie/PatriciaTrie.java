@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.TreeMap;
 
 import utils.ByteCharSequence;
 
-public class PatriciaTrie implements Externalizable {
+public class PatriciaTrie implements Serializable {
 
 	private PatriciaTrieNode root;
 	
@@ -94,7 +95,7 @@ public class PatriciaTrie implements Externalizable {
 		return root.countword();
 	}
 
-	@Override
+	/*@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 		root = (PatriciaTrieNode)in.readObject();
@@ -103,7 +104,7 @@ public class PatriciaTrie implements Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeObject(root);
-	}
+	}*/
 	
 	public void write(ByteBuffer byteBuffer)
 	{
@@ -112,10 +113,10 @@ public class PatriciaTrie implements Externalizable {
 	
 	public static PatriciaTrie read(ByteBuffer byteBuffer)
 	{
-		PatriciaTrie trie = PatriciaTrieSingleton.getInstance();
+		/*PatriciaTrie trie = PatriciaTrieSingleton.getInstance();
 		PatriciaTrieNode root = PatriciaTrieNode.read(byteBuffer);
-		trie.root = root;
-		return trie;
+		trie.root = root;*/
+		return new PatriciaTrie(PatriciaTrieNode.read(byteBuffer));
 	}
 	
 }

@@ -48,7 +48,7 @@ public class MainCompiler {
 			while ((line = br.readLine()) != null) {
 				int index = line.indexOf("\t");
 				ByteCharSequence word = new ByteCharSequence(line.substring(0, index));
-				int freq = Integer.valueOf(line.substring(index + 1));
+				int freq = Integer.parseInt(line.substring(index + 1));
 				tree.insert(word, freq);
 				i++;
 				if (i % 100000 == 0)
@@ -59,10 +59,10 @@ public class MainCompiler {
 		            
 //		  System.err.println("Used Memory in JVM: " + (maxMemory - freeMemory) + "/" + maxMemory + " " + totalMemory);
 
-				    long fin = System.currentTimeMillis();
+				    /*long fin = System.currentTimeMillis();
 			    long time = fin-debut;
 					System.err.println(i+" "+time);
-					debut = System.currentTimeMillis();
+					debut = System.currentTimeMillis();*/
 				}
 			}
 			
@@ -73,8 +73,8 @@ public class MainCompiler {
 			debut = System.currentTimeMillis();
 			tree.trim();
 
-			System.err.println("count : " + tree.countword());
-			System.err.println("trimming time : " + (System.currentTimeMillis() - debut));
+			/*System.err.println("count : " + tree.countword());
+			System.err.println("trimming time : " + (System.currentTimeMillis() - debut));*/
 
 
 			tree.map.clear();
@@ -82,9 +82,7 @@ public class MainCompiler {
 			//tree.print();
 			
 			// force GC. Useless?
-			System.err.println("Before GC");
 			//System.gc();
-			System.err.println("After GC");
 			
 			debut = System.currentTimeMillis();
 
@@ -92,7 +90,7 @@ public class MainCompiler {
 			/*GZIPOutputStream gzipOut = new GZIPOutputStream(file);
 			BufferedOutputStream bfout = new BufferedOutputStream(gzipOut);
 			ObjectOutputStream oos = new ObjectOutputStream(bfout);*/
-			System.err.println("Before Write");
+			//System.err.println("Before Write");
 			FileChannel chan = file.getChannel();
 			ByteBuffer buff = ByteBuffer.allocateDirect(70000000).order(ByteOrder.nativeOrder());
 			tree.write(buff);
@@ -100,14 +98,14 @@ public class MainCompiler {
 			chan.write(buff);
 			chan.close();
 			//oos.writeObject(tree);
-			System.err.println("After Write");
+			//System.err.println("After Write");
 			/*oos.flush();
 			oos.close();
 			bfout.close();
 			gzipOut.close();*/
 			file.close();
 
-			System.err.println("Serialization time : " + (System.currentTimeMillis() - debut));
+			//System.err.println("Serialization time : " + (System.currentTimeMillis() - debut));
 			
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
@@ -116,6 +114,6 @@ public class MainCompiler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.err.println("Global time : " + (System.currentTimeMillis() - start));
+		//System.err.println("Global time : " + (System.currentTimeMillis() - start));
 	}
 }
