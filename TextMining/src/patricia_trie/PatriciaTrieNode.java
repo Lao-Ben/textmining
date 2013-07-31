@@ -1,16 +1,9 @@
 package patricia_trie;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import utils.ByteCharSequence;
 
@@ -28,7 +21,6 @@ public class PatriciaTrieNode implements Serializable {
 	 * The frequency
 	 */
 	protected int f;
-	//transient ByteArrayOutputStream out;
 
 	/**
 	 * The default constructor for PatricieTrieNode
@@ -159,24 +151,14 @@ public class PatriciaTrieNode implements Serializable {
 	 */
 	void search(String prefix, StringBuilder word, int maxDistance,
 			List<ResultSearch> collector) {
-		/*
-		 * ExecutorService executor = Executors.newCachedThreadPool();
-		 * synchronized (collector) {
-		 */
 		for (PatriciaTrieNode n : s) {
 			Minion m = new Minion();
 			m.configure(n, word, -1, -1, maxDistance, prefix.length(),
 					collector);
 			if (maxDistance > 0)
 				m.calculateDistance(0, prefix.length());
-			/*
-			 * executor.execute(m); executor.shutdown();
-			 */
 			m.browse();
 		}
-		/*
-		 * } while (!executor.isTerminated()) ;
-		 */
 	}
 
 	/**
@@ -218,58 +200,6 @@ public class PatriciaTrieNode implements Serializable {
 		System.out.println("}");
 	}
 
-	/*@Override
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
-		int size = in.readInt();
-		s = null;
-		if (size > 0)
-		{
-			s = new ArrayList<PatriciaTrieNode>();
-			for (int i = 0; i < size; i++) {
-				s.add((PatriciaTrieNode) in.readObject());
-			}
-		}
-		// s = (ArrayList<PatriciaTrieNode>)in.readObject();
-		// Object array = in.readObject();
-		// System.out.println(this.getClass().getName());
-		// s = new
-		// ArrayList<PatriciaTrieNode>(Arrays.asList((PatriciaTrieNode[])array));
-		int len = in.readInt();
-		if (len > 0) {
-			byte[] bytes = new byte[len];
-			in.read(bytes);
-			w = new ByteCharSequence(bytes, 0, len);
-		}
-		// w = (ByteCharSequence)in.readObject();
-		f = in.readInt();
-	}
-
-	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-		if (s != null) {
-			out.writeInt(s.size());
-			for (PatriciaTrieNode son : s) {
-				out.writeObject(son);
-				son = null;
-			}
-			s.clear();
-			s = null;
-		} else
-			out.writeInt(0);
-		// out.writeObject(s.toArray());
-		// out.writeObject(w);
-		int len = (w == null) ? 0 : w.length();
-		out.writeInt(len);
-		// for (int i = 0; i < len; i++) {
-		if (len > 0)
-			out.write(w.getBytes());
-		// }
-		out.writeInt(f);
-		w = null;
-		out.flush();
-	}*/
-
 	private void replaceByCachedSequence() {
 		ByteCharSequence node = PatriciaTrieSingleton.getInstance().map.get(w);
 		if (node != null)
@@ -279,41 +209,6 @@ public class PatriciaTrieNode implements Serializable {
 		}
 		else
 			PatriciaTrieSingleton.getInstance().map.put(w, w);
-		/*ByteArrayOutputStream node = PatriciaTrieSingleton.getInstance().map.get(w);
-		if (node != null) {
-			try{
-				w = null;
-				ByteArrayInputStream arr = new ByteArrayInputStream(node.toByteArray());
-				BufferedInputStream bfin = new BufferedInputStream(arr);
-				int len = bfin.read();
-				byte[] bytes = new byte[len];
-				bfin.read(bytes);
-				w = new ByteCharSequence(bytes);
-				bfin.close();
-				arr.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		} 
-		else
-		{
-			try {
-				ByteArrayOutputStream arr = new ByteArrayOutputStream();
-				BufferedOutputStream bfout = new BufferedOutputStream(arr);
-				bfout.write(w.length());
-				bfout.write(w.getBytes());
-				bfout.flush();
-				bfout.close();
-				arr.flush();
-				arr.close();
-				PatriciaTrieSingleton.getInstance().map.put(w, arr);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}*/
 	}
 
 	/**
@@ -330,51 +225,6 @@ public class PatriciaTrieNode implements Serializable {
 		}
 		return c;
 	}
-
-	/*private void serialize() {
-		try {
-			out = new ByteArrayOutputStream();
-			ObjectOutputStream obj = new ObjectOutputStream(out);
-			int len = (w == null) ? 0 : w.length();
-			obj.writeInt(len);
-			// for (int i = 0; i < len; i++) {
-			if (len > 0)
-				obj.write(w.getBytes());
-			// }
-			obj.writeInt(f);
-			w = null;
-			obj.flush();
-			obj.close();
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void deserialize() {
-		try {
-			ByteArrayInputStream in = new ByteArrayInputStream(
-					out.toByteArray());
-			ObjectInputStream obj = new ObjectInputStream(in);
-			int len = obj.readInt();
-			if (len > 0) {
-				byte[] bytes = new byte[len];
-				obj.read(bytes);
-				w = new ByteCharSequence(bytes, 0, len);
-			}
-			// w = (ByteCharSequence)in.readObject();
-			f = obj.readInt();
-			obj.close();
-			in.close();
-			out.reset();
-			out = null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}*/
 	
 	public void write(ByteBuffer byteBuffer)
 	{
@@ -413,9 +263,6 @@ public class PatriciaTrieNode implements Serializable {
 			node.w = new ByteCharSequence(bytes);
 		}
 		node.f = buff.getInt();
-		/*if (word != null)
-			return new PatriciaTrieNode(word, freq, sons, true);*/
-		//return new PatriciaTrieNode(word, freq, sons, false);
 		return node;
 	}
 }

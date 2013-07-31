@@ -3,31 +3,72 @@ package patricia_trie;
 import java.util.ArrayList;
 import java.util.List;
 
-//public class Minion implements Runnable{
 public class Minion {
+	/**
+	 * The word to search
+	 */
 	StringBuilder word;
+	/**
+	 * The key we have
+	 */
 	StringBuilder key;
 
+	/**
+	 * The comparable table
+	 */
 	int[][] cmpTable;
 
+	/**
+	 * The size of key Buffer
+	 */
 	int keyBufferSize;
+	
+	/**
+	 * The word length
+	 */
 	int wordLen;
 	
+	/**
+	 * The minimal distance to the word
+	 */
 	int minDistance;
+	/**
+	 * The real distance to the word
+	 */
 	int realDistance;
+	/**
+	 * The maximum distance to search
+	 */
 	int maxDistance;
 	
+	/**
+	 * The size of comparable table
+	 */
 	int cmpTableSize;
+	
+	/**
+	 * The actual size of the comparable table
+	 */
 	int cmpTableActualSize;
 
-	
-	boolean isIdle;
+	/**
+	 * The list of result for search
+	 */
 	List<ResultSearch> collector;
 	
+	/**
+	 * The node we use
+	 */
 	PatriciaTrieNode root;
 	
+	/**
+	 * The length of the key
+	 */
 	int lengthkey;
 
+	/**
+	 * Create a new Minion with default values
+	 */
 	Minion() {
 		word = null;
 		cmpTable = null;
@@ -37,7 +78,6 @@ public class Minion {
 		keyBufferSize = 0;
 		minDistance = 0;
 		realDistance = 0;
-		isIdle = true;
 		collector = new ArrayList<ResultSearch>();
 		lengthkey = 0;
 		root = null;
@@ -107,7 +147,6 @@ public class Minion {
  	 * @param collectors the list of ResultSearch
 	 */
 	public void configure(PatriciaTrieNode root, StringBuilder word, int minDistance, int realDistance, int maxDistance, int lengthkey, List<ResultSearch> collectors) {
-		// log("being configured...");
 		this.root = root;
 		this.word = word;
 		this.minDistance = minDistance;
@@ -118,17 +157,15 @@ public class Minion {
 		this.wordLen = word.length();
 		
 		this.collector = collectors;
-
-		// Redim the key buffer if too small
+		
 		int keyBuff = wordLen + maxDistance;
 		if (keyBuff > keyBufferSize) {
 			key = new StringBuilder(keyBuff);
 			keyBufferSize = keyBuff;
 		}
 
-		// If maxDistance is at least, we need a table
+		// If maxDistance is at least 1, we need a table
 		if (maxDistance >= 1) {
-			// Redim the distance calculation table if too small
 			cmpTableSize = wordLen + maxDistance + 1;
 			if (cmpTableSize > cmpTableActualSize) {
 				cmpTable = new int[cmpTableSize][];
@@ -245,7 +282,7 @@ public class Minion {
 		calculateDistance(oldKeyLen, keyLen);
 
 		if (minDistance > 2 * maxDistance) {
-			return; // No chance to match
+			return;
 		}
 
 		// Add to results if the node means a word

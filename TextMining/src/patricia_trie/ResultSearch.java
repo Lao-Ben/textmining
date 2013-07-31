@@ -4,9 +4,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class ResultSearch implements Comparable<ResultSearch> {
+	/**
+	 * The word
+	 */
 	StringBuilder word;
+	/**
+	 * The distance
+	 */
 	int distance;
-	int frequence;
+	/**
+	 * The frequency
+	 */
+	int frequency;
 
 	/**
 	 * Create a new ResultSearch with word, distance and frequency
@@ -18,7 +27,7 @@ public class ResultSearch implements Comparable<ResultSearch> {
 		super();
 		this.word = word;
 		this.distance = distance;
-		this.frequence = frequence;
+		this.frequency = frequence;
 	}
 
 	public StringBuilder getWord() {
@@ -30,7 +39,7 @@ public class ResultSearch implements Comparable<ResultSearch> {
 	}
 
 	public int getFrequence() {
-		return frequence;
+		return frequency;
 	}
 
 	/**

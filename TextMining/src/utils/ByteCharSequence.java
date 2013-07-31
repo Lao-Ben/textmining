@@ -15,9 +15,19 @@ import java.io.UnsupportedEncodingException;
 public class ByteCharSequence implements CharSequence, Serializable, Comparable<ByteCharSequence> {
 	static final long serialVersionUID = 1L;
 
+	/**
+	 * The encoding
+	 */
 	private static final String ENCODING = "ISO-8859-1";
+	/**
+	 * The data
+	 */
 	private byte[] data;
 
+	/**
+	 * Create a new ByteCharSequence
+	 * @param str the word
+	 */
 	public ByteCharSequence(String str) {
 		try {
 			data = str.getBytes(ENCODING);
@@ -26,20 +36,37 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 		}
 	}
 	
+	/**
+	 * Create a new ByteCharSequence
+	 * @param data the data of the word
+	 */
 	public ByteCharSequence(byte[] data)
 	{
 		this.data = data;
 	}
 	
+	/**
+	 * Create a new ByteCharSequence
+	 * @param data the data
+	 * @param offset the offset
+	 * @param end the end
+	 */
 	public ByteCharSequence(byte[] data, int offset, int end) {
 		this.data = new byte[end - offset];
 		System.arraycopy(data, offset, this.data, 0, end - offset);
 	}
 
+	/**
+	 * Retrieve data
+	 * @return the data
+	 */
 	public byte[] getBytes() {
 		return data;
 	}
 	
+	/**
+	 * Return the character at index
+	 */
 	public char charAt(int index) {
 		if (index >= data.length) {
 			throw new StringIndexOutOfBoundsException("Invalid index " +
@@ -48,6 +75,9 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 		return (char) (data[index] & 0xff);
 	}
 
+	/**
+	 * Get length of data
+	 */
 	public int length() {
 		return data.length;
 	}
@@ -61,6 +91,12 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 		return new ByteCharSequence(data, start, end);
 	}
 	
+	/**
+	 * Get a subsequence of data
+	 * @param start start of subsequence
+	 * @param end end of subsequence
+	 * @return the subsequence
+	 */
 	public ByteCharSequence byteSubSequence(int start, int end) {
 		if (start < 0 || end > (data.length)) {
 			throw new IllegalArgumentException("Illegal range " +
@@ -69,6 +105,9 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 		return new ByteCharSequence(data, start, end);
 	}
 
+	/**
+	 * Retrieve the String
+	 */
 	public String toString() {
 		try {
 			return new String(data, ENCODING);
@@ -104,49 +143,5 @@ public class ByteCharSequence implements CharSequence, Serializable, Comparable<
 			if (cmp2 != 0) return cmp2;
 		}
 		return 0;
-	}
-	
-	public int indexOf(ByteCharSequence seq)
-	{
-		for (int i = 0; i < (data.length-seq.length());i++)
-		{
-			int j = 0;
-			for (j=0; j < seq.length(); j++)
-			{
-				if (charAt(i+j) != seq.charAt(j))
-					break;
-			}
-			if (j == seq.length())
-				return i;
-		}
-		return -1;
-	}
-	
-	public ByteCharSequence get(ByteCharSequence seq)
-	{
-		for (int i = 0; i < (data.length-seq.length());i++)
-		{
-			int j = 0;
-			byte[] tab = new byte[seq.length()];
-			for (j=0; j < seq.length(); j++)
-			{
-				if (charAt(i+j) != seq.charAt(j))
-					break;
-				else
-					tab[j] = seq.data[j];
-			}
-			if (j == seq.length())
-				return new ByteCharSequence(tab);
-		}
-		return null;
-	}
-	
-	public void append(ByteCharSequence seq)
-	{
-		byte[] tab = new byte[seq.length()+data.length];
-		System.arraycopy(data, 0, tab, 0, data.length);
-		System.arraycopy(seq.data, 0, tab, data.length, seq.length());
-		data = null;
-		data = tab;
 	}
 }

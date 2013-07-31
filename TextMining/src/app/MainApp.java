@@ -33,26 +33,12 @@ public class MainApp {
 		FileInputStream fich;
 		try {
 			fich = new FileInputStream(args[0]);
-			/*
-			 * GZIPInputStream gzipIn = new GZIPInputStream(fich);
-			 * BufferedInputStream bfin = new BufferedInputStream(gzipIn);
-			 * ObjectInputStream ois = new ObjectInputStream(bfin);
-			 */
-
-			//System.err.println("Deserializing...");
-			long debut = System.currentTimeMillis();
 			FileChannel chan = fich.getChannel();
 			ByteBuffer buff = ByteBuffer.allocateDirect((int) chan.size())
 					.order(ByteOrder.nativeOrder());
 			chan.read(buff);
 			buff.flip();
 			final PatriciaTrie tree = PatriciaTrie.read(buff);
-			long fin = System.currentTimeMillis();
-			long time = fin - debut;
-			//System.err.println("Deserialization time : " + time);
-			/*
-			 * ois.close(); bfin.close(); gzipIn.close();
-			 */
 			fich.close();
 			InputStreamReader ipsr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(ipsr);
@@ -68,32 +54,8 @@ public class MainApp {
 				String[] tab = line.split(" ");
 				final StringBuilder word = new StringBuilder(tab[2]);
 				final int dist = Integer.valueOf(tab[1]);
-
-				/*
-				 * Future<List<ResultSearch>> future = Constant.executor
-				 * .submit(new Callable<List<ResultSearch>>() {
-				 * 
-				 * @Override public List<ResultSearch> call() throws Exception {
-				 * return tree.search(word, dist, tree.getData() .toString()); }
-				 * }); listfuture.add(future);
-				 */
 				workers.add(new Worker(word, dist, tree));
-				// ResultSearch.exportJSon(tree.search(word, dist));
-				// ResultSearch.exp final List<Worker> workersingle = new
-				// ArrayList<Worker>();ortJSon(tree.search(wo//rd, dist));
-
-				// results_synchr = Collections.synchronizedList(results);
 			}
-			/*
-			 * boolean testFinish = false; while (!testFinish) { int i = 0; for
-			 * (Future<?> f : listfuture) if (f.isDone()) i++; if
-			 * (listfuture.size() == i) testFinish = true; }
-			 * Constant.executor.shutdown(); for (Future<List<ResultSearch>> f :
-			 * listfuture) try { ResultSearch.exportJSon(f.get()); } catch
-			 * (InterruptedException e) { // TODO Auto-generated catch block
-			 * e.printStackTrace(); } catch (ExecutionException e) { // TODO
-			 * Auto-generated catch block e.printStackTrace(); }
-			 */
 			try {
 				executor.invokeAll(workers);
 			} catch (InterruptedException e) {
@@ -105,17 +67,9 @@ public class MainApp {
 			while (!executor.isTerminated()) {
 			}
 
-			//StringBuilder res = new StringBuilder();
-
 			for (Worker worker : workers) {
 				System.out.println(worker.res);
 			}
-			// System.out.println(res);
-
-			/*System.err.println("Search time : "
-					+ (System.currentTimeMillis() - fin));
-			System.err.println("Global time : "
-					+ (System.currentTimeMillis() - debut));*/
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
